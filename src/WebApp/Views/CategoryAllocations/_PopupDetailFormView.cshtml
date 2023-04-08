@@ -1,0 +1,266 @@
+﻿﻿@model WebApp.Models.CategoryAllocation
+<!-- 弹出窗体form表单 -->
+<div id="categoryallocationdetailwindow" hidden="hidden" class="easyui-window"
+     title="明细数据"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    onBeforeClose:function(){
+                      var that = $(this);
+                      if(categoryallocationhasmodified()){
+                        $.messager.confirm('确认','你确定要放弃保存修改的记录?',function(r){
+                        if (r){
+                          var opts = that.panel('options');
+                          var onBeforeClose = opts.onBeforeClose;
+                          opts.onBeforeClose = function(){};
+                          that.panel('close');
+                          opts.onBeforeClose = onBeforeClose;
+                          hook = false;
+                        }
+                        });
+                        return false;
+                      }
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:650px;display:none">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          <button name="saveitembutton" onclick="savecategoryallocationitem()" class="btn btn-default">
+            <i class="fa fa-floppy-o"></i> @Html.L("Save")
+          </button>
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closecategoryallocationdetailwindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="">
+    <div class="widget-body">
+      <form id="categoryallocation_form"
+            class="easyui-form form-horizontal padding-10"
+            method="post"
+            data-options="novalidate:true,
+                            onChange: function(target){
+                              hook = true;
+                              $('button[name*=\'saveitembutton\']').prop('disabled', false);
+                             },
+                             onLoadSuccess:function(data){
+                               hook = false;
+                               $('button[name*=\'saveitembutton\']').prop('disabled', true);
+                             }">
+        @Html.AntiForgeryToken()
+        <!--Primary Key-->
+        @Html.HiddenFor(model => model.Id)
+        <fieldset>
+          <div class="form-group  ">
+            <!-- begin row -->
+
+            <label class="col-md-3 control-label"><span class="text-danger">*</span> @Html.DisplayNameFor(model => model.CategoryId)</label>
+            <div class="col-md-9">
+              <input id="@Html.IdFor(model => model.CategoryId)"
+                     name="@Html.NameFor(model => model.CategoryId)"
+                     value=""
+                     tabindex="0" 
+                     class="easyui-combobox"
+                     style="width: 560px"
+                     data-options="prompt:'@Html.DisplayNameFor(model => model.CategoryId)' ,
+                     panelHeight:'auto',
+                     editable:false,
+						required:true ,
+						valueField: 'Id',
+						textField:  'Name' ,
+						url: '/CategoryAllocations/GetCategories' ,
+						onSelect: function(item){
+						  //console.log(item);
+				        }">
+            </div>
+          </div>
+            </fieldset>
+            <fieldset>
+              <div class="form-group">
+                <label class="col-md-3 control-label"><span class="text-danger">*</span> 选择合格的供应商</label>
+                <div class="col-md-9">
+                  <table id="supplierlist" >
+                  </table>
+                </div>
+
+                <!--合格供应商-->
+
+              </div>
+
+        </fieldset>
+      </form>
+
+      <!--end form表单界面-->
+      <!--========================================================================================-->
+    </div>
+  </div>
+  <!--end window body -->
+</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+  var MODELSTATE = 'Added';
+  var categoryallocationid = null;
+  function opencategoryallocationdetailwindow(data, state) {
+    MODELSTATE = state;
+    initcategoryallocationdetailview();
+    categoryallocationid = (data.Id || 0);
+    $('#categoryallocationdetailwindow').window('open');
+    $('#CategoryId').combobox('setValue',null)
+    //$('#supplierlist').datagrid('reload', '');
+    $('#supplierlist').datagrid('uncheckAll');
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    $('#supplierlist').datagrid({
+      width: 560,
+      height:450,
+      rownumbers: true,
+      checkOnSelect: false,
+      selectOnCheck: false,
+      idField: 'Id',
+      sortName: 'Id',
+      sortOrder: 'desc',
+      remoteFilter: true,
+      singleSelect: false,
+      method: 'get',
+      onClickCell: onClickCell,
+      clientPaging: false,
+      pageList: [50, 100, 500, 1000],
+      pageSize:1000,
+      pagination: true,
+      striped: true,
+      columns: [[
+        { field: 'ck', checkbox: true },
+          {    /*名称*/
+            field: 'Name',
+            title: '名称',
+            width: 220,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+
+           {    /*供应商类型*/
+            field: 'Category',
+            title: '供应商类型',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+             {    /*经营范围*/
+            field: 'Scope',
+               title: '经营范围',
+            width: 200,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+
+          {    /*联系人*/
+            field: 'Contect',
+            title: '联系人',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+          {    /*联系电话*/
+            field: 'PhoneNumber',
+            title: '联系方式',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          }
+        ]]
+    })
+      .datagrid('enableFilter', [])
+      .datagrid('load','/Companies/GetSupplierData');
+  });
+
+  //async 保存数据
+  async function savecategoryallocationitem() {
+    const $categoryallocationform = $('#categoryallocation_form');
+    if ($categoryallocationform.form('enableValidation').form('validate')) {
+      let suplierId = $('#supplierlist').datagrid('getChecked').map(item => item.Id);
+      if (suplierId.length <= 0) {
+        $.messager.alert('提示', '请选择合格的供应商');
+        return;
+      }
+      let categoryallocation = $categoryallocationform.serializeJSON();
+      let url = '/CategoryAllocations/Allocation';
+      const request = {
+        CategoryId:categoryallocation.CategoryId,
+        SupplierId:suplierId
+      };
+      $.messager.progress({ title: '请等待', msg: '正在保存数据...', interval:200});
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+          request: request
+        },
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+      })
+        .done(response => {
+          $.messager.progress('close');
+          if (response.success) {
+            hook = false;
+            $categoryallocationform.form('disableValidation');
+            $dg.datagrid('reload');
+            $('#categoryallocationdetailwindow').window("close");
+            toastr.success("保存成功");
+          } else {
+            $.messager.alert("错误", response.err, "error");
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          //$.messager.progress('close');
+          $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+        });
+    }
+  }
+  //关闭窗口
+  function closecategoryallocationdetailwindow() {
+    $('#categoryallocationdetailwindow').window('close');
+  }
+
+  //判断是否有没有保存的记录
+  function categoryallocationhasmodified() {
+    return hook;
+
+  }
+
+
+  function initcategoryallocationdetailview() {
+
+  }
+</script>
+

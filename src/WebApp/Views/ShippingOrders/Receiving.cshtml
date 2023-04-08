@@ -1,0 +1,761 @@
+﻿@model WebApp.Models.PurchaseOrder
+@{
+  ViewBag.Title = "收货";
+}
+<!-- MAIN CONTENT -->
+<div id="content">
+
+  <!-- widget grid -->
+  <section id="widget-grid" class="">
+    <!-- row -->
+    <div class="row">
+      <!-- NEW WIDGET START -->
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
+          <!-- widget options:
+          usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+          data-widget-colorbutton="false"
+          data-widget-editbutton="false"
+          data-widget-togglebutton="false"
+          data-widget-deletebutton="false"
+          data-widget-fullscreenbutton="false"
+          data-widget-custombutton="false"
+          data-widget-collapsed="true"
+          data-widget-sortable="false"
+          -->
+          <header>
+
+            <ul id="widget-tab-1" class="nav nav-tabs pull-left">
+
+              <li class="active">
+
+                <a data-toggle="tab" href="#tab1"> <i class="fa fa-lg fa-cubes"></i> <span class="hidden-mobile hidden-tablet"> 收货作业 </span> </a>
+
+              </li>
+
+              <li>
+                <a data-toggle="tab" href="#tab2"> <i class="fa fa-lg fa-shopping-cart"></i> <span class="hidden-mobile hidden-tablet"> 等待供应商发货的采购单 </span></a>
+              </li>
+
+            </ul>
+          </header>
+
+          <!-- widget div-->
+          <div>
+            <!-- widget edit box -->
+            <div class="jarviswidget-editbox">
+              <!-- This area used as dropdown edit box -->
+            </div>
+            <!-- end widget edit box -->
+            <!-- widget content -->
+            <div class="widget-body no-padding">
+              <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+              </div>
+              <div class="tab-content no-padding">
+                <div class="tab-pane fade in active" id="tab1">
+                  <div class="widget-body-toolbar">
+                    <div class="row">
+                      <div class="col-sm-8  ">
+                        <div class="btn-group btn-group-sm" >
+                          <button onclick="received()" class="btn btn-default btn-primary" data-rel="tooltip" data-placement="bottom" title="收货确认"> <i class="fa fa-check-square-o"></i> 收货确认 </button>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                          <button type="button" onclick="importexcel('PurchaseOrder1')" class="btn btn-default"><i class="fa fa-cloud-upload"></i> 导入待收货的采购单 </button>
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a href="javascript:downloadtemplate()"><i class="fa fa-download"></i> @Html.L("Download") </a></li>
+                          </ul>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                          <button onclick="deletechecked()" class="btn btn-default " data-rel="tooltip" data-placement="bottom" title="删除"> <i class="fa fa-trash"></i> 删除 </button>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                          <button onclick="reload()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="@Html.L("Refresh")"> <i class="fa fa-refresh"></i> @Html.L("Refresh") </button>
+                        </div>
+
+                      </div>
+                      <div class="col-sm-4 text-align-right visible-lg-inline-block">
+
+                      </div>
+                    </div>
+
+                  </div>
+                  <!--begin datagrid-content -->
+                  <div class="table-responsive">
+                    <table id="receive_datagrid">
+                    </table>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="tab2">
+
+                  <div class="widget-body-toolbar">
+                    <div class="row">
+                      <div class="col-sm-8  ">
+                        <div class="btn-group btn-group-sm">
+                          <button onclick="reloadpodg()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="@Html.L("Refresh")"> <i class="fa fa-refresh"></i> @Html.L("Refresh") </button>
+                        </div>
+                      </div>
+                      <div class="col-sm-4 text-align-right visible-lg-inline-block">
+
+                      </div>
+                    </div>
+
+                  </div>
+                  <!--begin datagrid-content -->
+                  <div class="table-responsive">
+                    <table id="purchaseorders_datagrid">
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+
+              <!--end datagrid-content -->
+            </div>
+            <!-- end widget content -->
+          </div>
+          <!-- end widget div -->
+        </div>
+        <!-- end widget -->
+      </article>
+      <!-- WIDGET END -->
+    </div>
+    <!-- end row -->
+  </section>
+  <!-- end widget grid -->
+  <!-- file upload partial view -->
+  <!-- RenderPartial() does exactly the same thing and is better for performance over Partial() -->
+  <!-- end file upload partial view -->
+  <!-- detail popup window -->
+  <!-- end detail popup window -->
+
+</div>
+<!-- END MAIN CONTENT -->
+@{ Html.RenderPartial("_ImportWindow", new ViewDataDictionary { { "EntityName", "PurchaseOrder1" } }); }
+
+@{ Html.RenderPartial("_PopupReceiptFormView"); }
+<style>
+  .progressbarjs {
+    margin-bottom: 10px;
+    width: 100%;
+    height: 4px;
+  }
+</style>
+@section Scripts {
+  <script src="@Fingerprint.Tag("/Scripts/smartadmin.easyui.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/plugins/columns-reset.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.easyui.component.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.extend.formatter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/locale/easyui-lang-zh_CN.js")"></script>
+  <script src="~/Scripts/plugin/progressbar/progressbar.min.js"></script>
+  <script src="~/Scripts/plugin/bootbox/bootbox.all.min.js"></script>
+  <script type="text/javascript">
+      //是否强制从后台取值
+      const REQUIRBACKEND = false;
+      //是否开启行内编辑
+      const EDITINLINE = false;
+      var shippingorder = {};
+  function received () {
+    const selected = $dg.datagrid('getChecked');
+    if (selected.length > 0) {
+      openreceiptwindow(selected)
+
+    } else {
+      $.messager.alert('提示', '请先选择要收货的记录!', 'question');
+    }
+  }
+    //下载Excel导入模板
+    function downloadtemplate() {
+      //默认模板路径存放位置
+      const url = '/FileUpload/Download?file=/ExcelTemplate/非询价采购单导入模板.xlsx';
+      $.fileDownload(url)
+        .done(() => {
+          //console.log('file download a success!');
+          toastr.success('模板下载完成!');
+        })
+        .fail(() => {
+          $.messager.alert('下载模板失败', '没有下载到导入模板[非询价采购单导入模板.xlsx]文件!', 'error');
+        });
+    }
+
+
+       var editIndex = undefined;
+       //重新加载数据
+       function reload() {
+            if (EDITINLINE && endEditing()) {
+                $dg.datagrid('uncheckAll');
+                $dg.datagrid('reload');
+                 $("button[name*='deletebutton']").prop('disabled', true);
+                 $("button[name*='savebutton']").prop('disabled', true);
+                 $("button[name*='cancelbutton']").prop('disabled', true);
+            } else if (!EDITINLINE) {
+                $dg.datagrid('uncheckAll');
+                $dg.datagrid('reload');
+                 $("button[name*='deletebutton']").prop('disabled', true);
+                 $("button[name*='savebutton']").prop('disabled', true);
+                 $("button[name*='cancelbutton']").prop('disabled', true);
+            }
+       }
+      //关闭编辑状态
+      function endEditing() {
+            if (editIndex === undefined) {
+                return true;
+            }
+            if ($dg.datagrid('validateRow', editIndex)) {
+                $dg.datagrid('endEdit', editIndex);
+                return true;
+            } else {
+                const invalidinput = $('input.validatebox-invalid',$dg.datagrid('getPanel'));
+                const fieldnames = invalidinput.map((index, item) => {
+                  return $(item).attr('placeholder') || $(item).attr('id');
+                });
+                $.messager.alert('提示', `${Array.from(fieldnames)} 输入有误.`, 'error');
+                return false;
+            }
+        }
+
+
+  //删除该行
+  function deleteRow(id) {
+    $.messager.confirm('确认', '你确定要删除该记录?', result => {
+      if (result) {
+        dodeletechecked([id]);
+      }
+     });
+  }
+    //删除选中的行
+    function deletechecked() {
+        const id = $dg.datagrid('getChecked').map(item => {
+                   return item.Id;
+                });;
+        if (id.length > 0) {
+           $.messager.confirm('确认', `你确定要删除这 <span class='badge bg-color-red'>${id.length} </span> 行记录?`, result => {
+                if (result) {
+                    dodeletechecked(id);
+                    }
+                });
+         } else {
+                $.messager.alert('提示', '请先选择要删除的记录!','question');
+         }
+     }
+    //执行删除
+    function dodeletechecked(id){
+       $.post('/PurchaseOrders/DeleteReceiptData', { id: id })
+                         .done(response => {
+                                if (response.success) {
+                                    toastr.error(`成功删除[${id.length}]行记录`);
+                                    reload();
+                                } else {
+                                    $.messager.alert('错误', response.err,'error');
+                                }
+                          })
+                          .fail((jqXHR, textStatus, errorThrown) => {
+                             $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+                          });
+    }
+
+
+
+    //初始化定义datagrid
+    var $dg = $('#receive_datagrid');
+    var $podg = $('#purchaseorders_datagrid');
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      e.target // newly activated tab
+      e.relatedTarget // previous active tab
+      $dg.datagrid('resize')
+      $podg.datagrid('resize')
+    })
+
+    $(() => {
+
+
+
+    //定义datagrid结构
+    $dg.datagrid({
+      rownumbers: true,
+      checkOnSelect: false,
+      selectOnCheck: false,
+      idField: 'Id',
+      sortName: 'Id',
+      sortOrder: 'desc',
+      remoteFilter: true,
+      singleSelect: false,
+      method: 'get',
+      clientPaging: false,
+      pagination: true,
+      striped: true,
+      pageList: [10, 20, 50, 100, 500],
+      onBeforeLoad: function () {
+        //datagrid resize when jarvisWidgets resized.
+        const that = $(this);
+        $(window).on("resize.jarvisWidgets", () => {
+          that.datagrid('resize');
+        })
+      },
+      onLoadSuccess: function (data) {
+        editIndex = undefined;
+        $('[data-toggle="tooltip"]').tooltip();
+      },
+      onCheck: function () {
+        $("button[name*='deletebutton']").prop('disabled', false);
+      },
+      onUncheck: function () {
+        const checked = $(this).datagrid('getChecked').length > 0;
+        $("button[name*='deletebutton']").prop('disabled', !checked);
+      },
+
+      frozenColumns: [[
+        /*开启CheckBox选择功能*/
+        { field: 'ck', checkbox: true },
+      ]],
+      columns: [[
+        {    /*采购单号*/
+          field: 'PO',
+          title: '@Html.DisplayNameFor(model => model.PO)',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*出货单号*/
+          field: 'SO',
+          title: '@Html.DisplayNameFor(model => model.SO)',
+          width: 120,
+          hidden: false,
+
+          sortable: true,
+          resizable: true
+        },
+        {    /*状态*/
+          field: 'Status',
+          title: '@Html.DisplayNameFor(model => model.Status)',
+          width: 80,
+          align: 'right',
+          hidden: false,
+          formatter: statusformatter
+        },
+         {    /*供应商*/
+           field: 'SupplierName',
+          title: '供应商',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {   /*下单日期*/
+          field: 'PODate',
+          title: '<span class="required">@Html.DisplayNameFor(model => model.PODate)</span>',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {   /*发货日期*/
+          field: 'ShippingDate',
+          title: '@Html.DisplayNameFor(model => model.ShippingDate)',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*序号*/
+          field: 'LineNum',
+          title: '@Html.DisplayNameFor(model => model.LineNum)',
+          width: 65,
+          hidden: false,
+
+          sortable: true,
+          resizable: true
+        },
+        {    /*品名*/
+          field: 'ProductName',
+          title: '@Html.DisplayNameFor(model => model.ProductName)',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*规格*/
+          field: 'Spec',
+          title: '@Html.DisplayNameFor(model => model.Spec)',
+          width: 150,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+         {    /*参数*/
+          field: 'Feature',
+          title: '@Html.DisplayNameFor(model => model.Feature)',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+         {    /*货号*/
+          field: 'ProductNo',
+          title: '@Html.DisplayNameFor(model => model.ProductNo)',
+          width: 120,
+          hidden: true,
+          sortable: true,
+          resizable: true
+        },
+        {    /*单位*/
+          field: 'Unit',
+          title: '@Html.DisplayNameFor(model => model.Unit)',
+          width: 60,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'Qty',
+          title: '@Html.DisplayNameFor(model => model.Qty)',
+          width: 110,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'ReceiptQty',
+          title: '@Html.DisplayNameFor(model => model.ReceiptQty)',
+          width: 110,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'OpenQty',
+          title: '@Html.DisplayNameFor(model => model.OpenQty)',
+          width: 110,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*科研号*/
+          field: 'GrantNo',
+          title: '@Html.DisplayNameFor(model => model.GrantNo)',
+          width: 120,
+          sortable: true,
+          resizable: true
+        },
+        {    /*申请部门*/
+          field: 'Dept',
+          title: '@Html.DisplayNameFor(model => model.Dept)',
+          width: 130,
+          sortable: true,
+          resizable: true
+        },
+        {    /*申请科室*/
+          field: 'Section',
+          title: '@Html.DisplayNameFor(model => model.Section)',
+          width: 130,
+          sortable: true,
+          resizable: true
+        },
+        {    /*备注*/
+          field: 'Description',
+          title: '@Html.DisplayNameFor(model => model.Description)',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+      ]]
+    })
+    .datagrid('enableFilter', [
+      /*需要在键值队维护好status枚举值*/
+      {  /*状态*/
+        field: 'Status',
+        type: 'status5filter',
+        options: {
+
+        }
+      },
+      {     /*下单日期*/
+        field: 'PODate',
+        type: 'dateRange',
+        options: {
+        }
+      },
+      {  /*类别*/
+        field: 'Category',
+        type: 'combobox',
+        options: {
+          url: '/Categories/GetComboData',
+          textField: 'Name',
+          valueField: 'Name',
+          editable: true,
+          method: 'get',
+          panelHeight: 'auto',
+          onChange: function (value) {
+            if (value && value.length > 0) {
+              $dg.datagrid('addFilterRule', {
+                field: 'Category',
+                op: 'equal',
+                value: value
+              });
+            } else {
+              $dg.datagrid('removeFilterRule', 'Category');
+
+            }
+            $dg.datagrid('doFilter');
+          }
+        }
+      },
+    ])
+      .datagrid('load', '/PurchaseOrders/GetReceiveData');
+
+
+
+
+      $podg.datagrid({
+      rownumbers: true,
+      checkOnSelect: false,
+      selectOnCheck: false,
+      idField: 'Id',
+      sortName: 'Id',
+      sortOrder: 'desc',
+      remoteFilter: true,
+      singleSelect: false,
+      method: 'get',
+      pagination: true,
+      clientPaging:false,
+      striped: true,
+      pageList: [10, 20, 50, 100, 500],
+      onBeforeLoad: function () {
+        //datagrid resize when jarvisWidgets resized.
+        const that = $(this);
+        $(window).on("resize.jarvisWidgets", () => {
+          that.datagrid('resize');
+        })
+      },
+     columns: [[
+
+         {    /*状态*/
+          field: 'Status',
+         title: '状态',
+          width: 90,
+          align: 'right',
+          hidden: false,
+       },
+       {    /*中标供应商*/
+         field: 'SupplierName',
+         title: '中标供应商',
+         width: 200,
+         hidden: false,
+         sortable: true,
+         resizable: true
+       },
+
+        {    /*采购单号*/
+          field: 'PO',
+          title: '采购单号',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+       },
+       {    /*采购类别*/
+         field: 'Category',
+         title: '采购类别',
+         width: 100,
+         sortable: true,
+         resizable: true
+       },
+        {    /*序号*/
+          field: 'LineNum',
+          title: '序号',
+          width: 65,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*品名*/
+          field: 'ProductName',
+          title: '品名',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*规格*/
+          field: 'Spec',
+          title: '规格',
+          width: 150,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+         {    /*参数*/
+          field: 'Feature',
+          title: '参数',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+         {    /*品牌*/
+          field: 'BrandName',
+          title: '品牌',
+          width: 150,
+          hidden: true,
+          sortable: true,
+          resizable: true
+        },
+        {    /*单位*/
+          field: 'Unit',
+          title: '单位',
+          width: 60,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'Qty',
+          title: '数量',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+       },
+        {    /*科研号*/
+          field: 'GrantNo',
+          title: '科研号',
+          width: 120,
+          sortable: true,
+          resizable: true
+        },
+
+       {    /*申请部门*/
+         field: 'Dept',
+         title: '申请部门',
+         width: 100,
+         sortable: true,
+         resizable: true
+       },
+       {    /*申请科室*/
+         field: 'Section',
+         title: '申请科室',
+         width: 100,
+         sortable: true,
+         resizable: true
+       },
+        {    /*备注*/
+          field: 'Description',
+          title: '备注',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {   /*要求到货日期*/
+          field: 'DemandedDate',
+          title: '要求到货日期',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*业务联系人*/
+          field: 'Buyer',
+          title: '业务联系人',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*联系人电话*/
+          field: 'BuyerPhone',
+          title: '联系人电话',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {   /*发标日期*/
+          field: 'BiddingDate',
+          title: '发标日期',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {   /*截至日期*/
+          field: 'DueDate',
+          title: '截至日期',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {   /*下单日期*/
+          field: 'PODate',
+          title: '下单日期',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*中标价格*/
+          field: 'BidedPrice',
+          title: '中标价格',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+        },
+
+      ]]
+      })
+        .datagrid('enableFilter', [
+          {  /*状态*/
+            field: 'Status',
+            type: 'textbox',
+            options: {
+              disable: true, readonly: true
+            }
+          },
+        ])
+        .datagrid('load','/PurchaseOrders/GetNoShippingData')
+  });
+
+  </script>
+
+
+
+}
+
+

@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+// <copyright file="ShippingOrderMetadata.cs" company="neozhu/MVC5-Scaffolder">
+// Copyright (c) 2020 All Rights Reserved
+// </copyright>
+// <author>neo.zhu</author>
+// <date>3/10/2020 9:40:53 AM </date>
+// <summary>Class representing a Metadata entity </summary>
+  -->
+<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+   </data> 
+  <data name="SO" xml:space="preserve">
+    <value>出货单号</value>
+   </data> 
+  <data name="Status" xml:space="preserve">
+    <value>状态</value>
+   </data> 
+  <data name="ShippingDate" xml:space="preserve">
+    <value>发货日期</value>
+   </data> 
+  <data name="DeliveryAddress" xml:space="preserve">
+    <value>送货地址</value>
+   </data> 
+  <data name="Buyer" xml:space="preserve">
+    <value>业务联系人</value>
+   </data> 
+  <data name="BuyerPhone" xml:space="preserve">
+    <value>联系人电话</value>
+   </data> 
+  <data name="Packages" xml:space="preserve">
+    <value>总件数</value>
+   </data> 
+  <data name="TotalAmount" xml:space="preserve">
+    <value>总金额</value>
+   </data> 
+  <data name="InvoiceNo" xml:space="preserve">
+    <value>发票号</value>
+   </data> 
+  <data name="InvoiceAmount" xml:space="preserve">
+    <value>开票金额</value>
+   </data> 
+  <data name="TaxRate" xml:space="preserve">
+    <value>税点</value>
+   </data> 
+  <data name="Tax" xml:space="preserve">
+    <value>税金</value>
+   </data> 
+  <data name="Remark" xml:space="preserve">
+    <value>备注</value>
+   </data> 
+  <data name="ReceivedDate" xml:space="preserve">
+    <value>收货日期</value>
+   </data> 
+  <data name="ClosedDate" xml:space="preserve">
+    <value>结案日期</value>
+   </data> 
+  <data name="UserName" xml:space="preserve">
+    <value>发货人</value>
+   </data> 
+  <data name="SupplierId" xml:space="preserve">
+    <value>供应商ID</value>
+   </data> 
+  <data name="SupplierName" xml:space="preserve">
+    <value>供应商</value>
+   </data> 
+</root>

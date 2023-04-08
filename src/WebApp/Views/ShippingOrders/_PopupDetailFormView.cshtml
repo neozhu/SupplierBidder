@@ -1,0 +1,516 @@
+﻿﻿@model WebApp.Models.ShippingOrder
+<!-- 弹出窗体form表单 -->
+<div id="biddingdetailwindow" hidden="hidden" class="easyui-window"
+     title="创建发货单"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    footer:'#windowfooter',
+                    closeDuration:200,
+                    closeAnimation:'slide',
+                    openDuration:300,
+                    openAnimation:'slide',
+                    onBeforeClose:function(){
+                      @*var that = $(this);
+                      if(biddinghasmodified()){
+                        $.messager.confirm('确认','你确定要放弃保存修改的记录?',function(r){
+                        if (r){
+                          var opts = that.panel('options');
+                          var onBeforeClose = opts.onBeforeClose;
+                          opts.onBeforeClose = function(){};
+                          that.panel('close');
+                          opts.onBeforeClose = onBeforeClose;
+                          hook = false;
+                        }
+                        });
+                        return false;
+                      }*@
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:1020px;height:520px">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm" id="saveitembutton">
+          <button name="saveitembutton" onclick="savebiddingitem()" class="btn btn-default">
+            <i class="fa fa-floppy-o"></i> @Html.L("Save")
+          </button>
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closebiddingdetailwindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="widget-body">
+    <form id="bidding_form"
+          class="easyui-form form-horizontal padding-10"
+          method="post"
+          data-options="novalidate:true,
+                            onChange: function(target){
+                              hook = true;
+                              $('button[name*=\'saveitembutton\']').prop('disabled', false);
+                             },
+                             onLoadSuccess:function(data){
+                               hook = false;
+                               $('button[name*=\'saveitembutton\']').prop('disabled', true);
+                             }">
+      @Html.AntiForgeryToken()
+      <!--Primary Key-->
+      @Html.HiddenFor(model => model.Id)
+      @Html.HiddenFor(model => model.SupplierId)
+      @Html.HiddenFor(model => model.SupplierName)
+      <fieldset>
+        <legend>发货单信息</legend>
+        <!--end row-->
+        <!-- begin row -->
+        <!--出货单号-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.SO)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.SO)"
+                   name="@Html.NameFor(model => model.SO)"
+                   value="@Html.ValueFor(model => model.SO)"
+                   tabindex="0" required
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.SO)',
+								 required:true,readonly:true,
+                                 validType: 'length[0,20]'
+                                 " />
+          </div>
+        </div>
+        <!--状态-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.Status)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.Status)"
+                   name="@Html.NameFor(model => model.Status)"
+                   value="@Html.ValueFor(model => model.Status)"
+                   tabindex="1" required
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.Status)',
+								 required:true,readonly:true, validType: 'length[0,10]'
+                                 " />
+          </div>
+        </div>
+        <!--end row-->
+        <!-- begin row -->
+        <!--发货日期-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.ShippingDate)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.ShippingDate)"
+                   name="@Html.NameFor(model => model.ShippingDate)"
+                   value="@Html.ValueFor(model => model.ShippingDate)"
+                   tabindex="2" required
+                   class="easyui-datebox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.ShippingDate)',
+								 required:true,
+								 formatter:dateformatter" />
+          </div>
+        </div>
+        <!--送货地址-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.DeliveryAddress)</label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.DeliveryAddress)"
+                   name="@Html.NameFor(model => model.DeliveryAddress)"
+                   value="@Html.ValueFor(model => model.DeliveryAddress)"
+                   tabindex="3"
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.DeliveryAddress)',
+								 required:false, validType: 'length[0,200]'
+                                 " />
+          </div>
+        </div>
+        <!--end row-->
+        <!-- begin row -->
+        <!--业务联系人-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Buyer)</label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.Buyer)"
+                   name="@Html.NameFor(model => model.Buyer)"
+                   value="@Html.ValueFor(model => model.Buyer)"
+                   tabindex="4"
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.Buyer)',
+								 required:false,validType: 'length[0,20]'
+                                 " />
+          </div>
+        </div>
+        <!--联系人电话-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.BuyerPhone)</label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.BuyerPhone)"
+                   name="@Html.NameFor(model => model.BuyerPhone)"
+                   value="@Html.ValueFor(model => model.BuyerPhone)"
+                   tabindex="5"
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.BuyerPhone)',
+								 required:false,
+                                 validType: 'length[0,50]'
+                                 " />
+          </div>
+        </div>
+        <!--end row-->
+        <!-- begin row -->
+        <!--总件数-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.Packages)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.Packages)"
+                   name="@Html.NameFor(model => model.Packages)"
+                   value="@Html.ValueFor(model => model.Packages)"
+                   tabindex="6"
+                   class="easyui-numberspinner"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.Packages)',
+								 required:true,readonly:true,formatter:intformatter,
+                                 precision:2,
+
+                                 " />
+
+          </div>
+        </div>
+        <!--总金额-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.TotalAmount)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.TotalAmount)"
+                   name="@Html.NameFor(model => model.TotalAmount)"
+                   value="@Html.ValueFor(model => model.TotalAmount)"
+                   tabindex="7"
+                   class="easyui-numberspinner"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.TotalAmount)',
+								 required:true,readonly:true,formatter:numberformatter,
+                                 precision:2,
+
+                                 " />
+
+          </div>
+        </div>
+        <!--end row-->
+        <!-- begin row -->
+        <!--发票号-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.InvoiceNo)</label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.InvoiceNo)"
+                   name="@Html.NameFor(model => model.InvoiceNo)"
+                   value="@Html.ValueFor(model => model.InvoiceNo)"
+                   tabindex="8"
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.InvoiceNo)',
+								 required:false,
+                                 validType: 'length[0,50]'
+                                 " />
+          </div>
+        </div>
+        <!--开票金额-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.InvoiceAmount)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.InvoiceAmount)"
+                   name="@Html.NameFor(model => model.InvoiceAmount)"
+                   value="@Html.ValueFor(model => model.InvoiceAmount)"
+                   tabindex="9"
+                   class="easyui-numberspinner"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.InvoiceAmount)',
+								 required:true,formatter:numberformatter,
+                                 precision:2,
+
+                                 " />
+
+          </div>
+        </div>
+        <!--end row-->
+        <!-- begin row -->
+        <!--税点-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.TaxRate)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.TaxRate)"
+                   name="@Html.NameFor(model => model.TaxRate)"
+                   value="@Html.ValueFor(model => model.TaxRate)"
+                   tabindex="10"
+                   class="easyui-numberspinner"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.TaxRate)',
+								 required:true,
+                                 precision:2,
+
+                                 " />
+
+          </div>
+        </div>
+        <!--税金-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.Tax)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.Tax)"
+                   name="@Html.NameFor(model => model.Tax)"
+                   value="@Html.ValueFor(model => model.Tax)"
+                   tabindex="11"
+                   class="easyui-numberspinner"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.Tax)',
+								 required:true,formatter:numberformatter,
+                                 precision:2,
+
+                                 " />
+
+          </div>
+        </div>
+        <!--收货日期-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.ReceivedDate)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.ReceivedDate)"
+                   name="@Html.NameFor(model => model.ReceivedDate)"
+                   value="@Html.ValueFor(model => model.ReceivedDate)"
+                   tabindex="2" required
+                   class="easyui-datebox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.ReceivedDate)',
+								 required:true,readonly:true,
+								 formatter:dateformatter" />
+          </div>
+        </div>
+        <!--结案日期-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label"><span class="required">@Html.DisplayNameFor(model => model.ClosedDate)</span></label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.ClosedDate)"
+                   name="@Html.NameFor(model => model.ClosedDate)"
+                   value="@Html.ValueFor(model => model.ClosedDate)"
+                   tabindex="2" required
+                   class="easyui-datebox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.ClosedDate)',
+								 required:true,readonly:true,
+								 formatter:dateformatter" />
+          </div>
+        </div>
+        <!--end row-->
+        <!-- begin row -->
+        <!--备注-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Remark)</label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.Remark)"
+                   name="@Html.NameFor(model => model.Remark)"
+                   value="@Html.ValueFor(model => model.Remark)"
+                   tabindex="12"
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.Remark)',
+								 required:false,
+                                 validType: 'length[0,200]'
+                                 " />
+          </div>
+        </div>
+
+
+        <!--发货人-->
+        <div class="form-group  col-md-6">
+          <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.UserName)</label>
+          <div class="col-md-10">
+            <input id="@Html.IdFor(model => model.UserName)"
+                   name="@Html.NameFor(model => model.UserName)"
+                   value="@Html.ValueFor(model => model.UserName)"
+                   tabindex="15"
+                   class="easyui-textbox"
+                   style="width:100%"
+                   type="text"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.UserName)',
+								 required:false,readonly:true,
+                                 validType: 'length[0,20]'
+                                 " />
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>发货明细</legend>
+        <div id="addprogressbar" class="form-group  col-md-12">
+      
+          <div class="table-responsive">
+            <table id="table1" class="table table-bordered table-hover">
+
+              <thead>
+                <tr>
+                  <th>采购单号</th>
+                  <th>科研号</th>
+                  <th>序号</th>
+                  <th>要求到货日期</th>
+                  <th>品名</th>
+                  <th>申请人</th>
+                  <th>投标品牌</th>
+                  <th>规格</th>
+                  <th>参数</th>
+                  <th>数量</th>
+                  <th>单位</th>
+                  <th>单价</th>
+                  <th>总价</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!--end row-->
+      </fieldset>
+    </form>
+
+    <!--end form表单界面-->
+    <!--========================================================================================-->
+  </div>
+  <!--end window body -->
+</div>
+<div id="windowfooter" style="padding:5px;">&nbsp;</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+    //判断新增编辑状态
+  async function openbiddingdetailwindow(data) {
+    $('#addprogressbar').prepend(`<div class="progressbarjs" id="progressbarjs"></div>`);
+      $('#biddingdetailwindow').window('open');
+      var bar = new ProgressBar.Line(`#progressbarjs`, {
+        easing: 'easeInOut',
+        duration: 1400,
+        color: '#57889c',
+        trailColor: '#eee',
+        trailWidth: 1,
+      });
+      bar.animate(1.0);
+    $("#table1 tbody").empty();
+      $('#bidding_form').form('reset');
+      let items = await $.get(`/Biddings/GetDataWithSo?so=${data.SO}`);
+      $('#bidding_form').form('load', data);
+      
+      items.forEach((item, i) => {
+        const row1 = `<tr>
+                   <td>${item.PO}</td>
+                   <td>${item.GrantNo||''}</td>
+                   <td>${item.LineNum}</td>
+                   <td>${item.DemandedDate?moment(item.DemandedDate).format('MM-DD'):''}</td>
+                   <td>${item.ProductName}</td>
+                   <td>${item.Buyer}</td>
+                   <td>${item.BrandName}</td>
+                   <td>${item.Spec}</td>
+                   <td>${item.Feature}</td>
+                   <td>${numeral(item.Qty).format('0,0')}</td>
+                   <td>${item.Unit}</td>
+                   <td>${numeral(item.BiddingPrice).format('0,0.00')}</td>
+                   <td>${numeral(item.TotalPrice).format('0,0.00')}</td>
+                   <td>${item.Description}</td>
+                 </tr>`;
+        $("#table1 tbody").append(row1);
+      });
+
+      if (data.Status == '待发货') {
+        $('#saveitembutton').show()
+         $('#bidding_form').form('enable');
+      } else {
+        $('#saveitembutton').hide()
+       $('#bidding_form').form('disable');
+      }
+      $(`#progressbarjs`).remove()
+    }
+
+    //async 保存数据
+    async function savebiddingitem() {
+      const $biddingform = $('#bidding_form');
+      if ($biddingform.form('enableValidation').form('validate')) {
+        let shippingOrder = $biddingform.serializeJSON();
+        let url = '/ShippingOrders/Edit';
+        $.messager.progress({ title: '请等待', msg: '正在保存数据...', interval: 200 });
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            shippingOrder: shippingOrder
+          },
+          dataType: 'json',
+          contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+        })
+          .done(response => {
+            $.messager.progress('close');
+            if (response.success) {
+              hook = false;
+              $biddingform.form('disableValidation');
+              $dg.datagrid('reload');
+              $('#biddingdetailwindow').window("close");
+              toastr.success("保存成功");
+            } else {
+              $.messager.alert("错误", response.err, "error");
+            }
+          })
+          .fail((jqXHR, textStatus, errorThrown) => {
+            $.messager.progress('close');
+            $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+          });
+      }
+    }
+    //关闭窗口
+    function closebiddingdetailwindow() {
+      $('#biddingdetailwindow').window('close');
+    }
+
+    //判断是否有没有保存的记录
+    function biddinghasmodified() {
+      return hook;
+
+    }
+
+
+
+</script>
+

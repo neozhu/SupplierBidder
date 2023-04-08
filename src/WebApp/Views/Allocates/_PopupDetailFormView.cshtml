@@ -1,0 +1,537 @@
+﻿﻿@model WebApp.Models.Allocate
+<!-- 弹出窗体form表单 -->
+ <div id="allocatedetailwindow" hidden="hidden" class="easyui-window" 
+      title="明细数据" 
+      data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    onBeforeClose:function(){
+                      var that = $(this);
+                      if(allocatehasmodified()){
+                        $.messager.confirm('确认','你确定要放弃保存修改的记录?',function(r){
+                        if (r){
+                          var opts = that.panel('options');
+                          var onBeforeClose = opts.onBeforeClose;
+                          opts.onBeforeClose = function(){};
+                          that.panel('close');
+                          opts.onBeforeClose = onBeforeClose;
+                          hook = false;
+                        }
+                        });
+                        return false;
+                      }
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:450px;display:none">
+    <!-- begin toolbar -->
+    <div class="window-body-toolbar">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="btn-group btn-group-sm">
+                       <button name="saveitembutton" onclick="saveallocateitem()" class="btn btn-default"> 
+                          <i class="fa fa-floppy-o"></i> @Html.L("Save") 
+                       </button>
+                </div>
+                <div class="btn-group btn-group-sm" id="deleteitem-btn-group">
+                  <button onclick="deleteallocateitem()" class="btn btn-danger">
+                    <i class="fa fa-trash-o"></i> @Html.L("Delete")
+                  </button>
+                </div>
+                <div class="btn-group btn-group-sm" style="display:none">
+                    <button onclick="todo()" class="btn btn-default">
+                        <i class="fa fa-print"></i> ToDo
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-4 text-align-right">
+              <div class="btn-group btn-group-sm">
+                <button type="button" class="btn   btn-success" onclick="closeallocatedetailwindow()">
+                    <i class="fa fa-chevron-left"></i>
+                    @Html.L("Close")
+                </button>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!-- end toolbar -->
+    <!-- begin window body -->
+<div class="container">
+    <div class="widget-body">
+           <form id="allocate_form" 
+              class="easyui-form form-horizontal padding-10" 
+              method="post" 
+              data-options="novalidate:true,
+                            onChange: function(target){
+                              hook = true;
+                              $('button[name*=\'saveitembutton\']').prop('disabled', false);
+                             },
+                             onLoadSuccess:function(data){
+                               hook = false;
+                               $('button[name*=\'saveitembutton\']').prop('disabled', true);
+                             }">
+  @Html.AntiForgeryToken()
+   <!--Primary Key-->
+  @Html.HiddenFor(model=>model.Id)
+   <fieldset>
+   <div class="form-group">
+<!-- begin row -->
+   <!--采购单号-->
+        <label class="col-md-2 control-label"><span class="text-danger">*</span> @Html.DisplayNameFor(model => model.PO)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.PO)" 
+				   name="@Html.NameFor(model => model.PO)" 
+				   value="@Html.ValueFor(model => model.PO)"
+				   tabindex="0" required
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.PO)',
+								 required:true, 
+                                 validType: 'length[0,20]'
+                                 " />
+       </div>
+				      <!--序号-->
+        <label class="col-md-2 control-label"><span class="text-danger">*</span> @Html.DisplayNameFor(model => model.LineNum)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.LineNum)" 
+				   name="@Html.NameFor(model => model.LineNum)" 
+				   value="@Html.ValueFor(model => model.LineNum)"
+				   tabindex="1" required
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.LineNum)',
+								 required:true, 
+                                 validType: 'length[0,3]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--申请日期-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.PODate)</label>
+		<div class="col-md-4">  
+                <input id="@Html.IdFor(model => model.PODate)" 
+			       name="@Html.NameFor(model => model.PODate)"
+                   value="@Html.ValueFor(model => model.PODate)"
+           		   tabindex="2"  
+				   class="easyui-datebox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.PODate)',
+								 required:false,
+								 formatter:dateformatter" />
+     </div>
+				      <!--收货日期-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.ReceivedDate)</label>
+		<div class="col-md-4">  
+                <input id="@Html.IdFor(model => model.ReceivedDate)" 
+			       name="@Html.NameFor(model => model.ReceivedDate)"
+                   value="@Html.ValueFor(model => model.ReceivedDate)"
+           		   tabindex="3"  
+				   class="easyui-datebox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.ReceivedDate)',
+								 required:false,
+								 formatter:dateformatter" />
+     </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--领用日期-->
+        <label class="col-md-2 control-label"><span class="text-danger">*</span> @Html.DisplayNameFor(model => model.OuboundDate)</label>
+		<div class="col-md-4">  
+                <input id="@Html.IdFor(model => model.OuboundDate)" 
+			       name="@Html.NameFor(model => model.OuboundDate)"
+                   value="@Html.ValueFor(model => model.OuboundDate)"
+           		   tabindex="4"  required
+				   class="easyui-datebox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.OuboundDate)',
+								 required:true,
+								 formatter:dateformatter" />
+     </div>
+				      <!--领用人-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.RecordUser)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.RecordUser)" 
+				   name="@Html.NameFor(model => model.RecordUser)" 
+				   value="@Html.ValueFor(model => model.RecordUser)"
+				   tabindex="5" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.RecordUser)',
+								 required:false, 
+                                 validType: 'length[0,20]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--货号-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.ProductNo)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.ProductNo)" 
+				   name="@Html.NameFor(model => model.ProductNo)" 
+				   value="@Html.ValueFor(model => model.ProductNo)"
+				   tabindex="6" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.ProductNo)',
+								 required:false, 
+                                 validType: 'length[0,50]'
+                                 " />
+       </div>
+				      <!--品名-->
+        <label class="col-md-2 control-label"><span class="text-danger">*</span> @Html.DisplayNameFor(model => model.ProductName)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.ProductName)" 
+				   name="@Html.NameFor(model => model.ProductName)" 
+				   value="@Html.ValueFor(model => model.ProductName)"
+				   tabindex="7" required
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.ProductName)',
+								 required:true, 
+                                 validType: 'length[0,100]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--规格-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Spec)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.Spec)" 
+				   name="@Html.NameFor(model => model.Spec)" 
+				   value="@Html.ValueFor(model => model.Spec)"
+				   tabindex="8" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Spec)',
+								 required:false, 
+                                 validType: 'length[0,100]'
+                                 " />
+       </div>
+				      <!--投标品牌-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.BrandName)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.BrandName)" 
+				   name="@Html.NameFor(model => model.BrandName)" 
+				   value="@Html.ValueFor(model => model.BrandName)"
+				   tabindex="9" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.BrandName)',
+								 required:false, 
+                                 validType: 'length[0,100]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--单位-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Unit)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.Unit)" 
+				   name="@Html.NameFor(model => model.Unit)" 
+				   value="@Html.ValueFor(model => model.Unit)"
+				   tabindex="10" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Unit)',
+								 required:false, 
+                                 validType: 'length[0,10]'
+                                 " />
+       </div>
+				      <!--领用数量-->
+       <label class="col-md-2 control-label"><span class="text-danger">*</span> @Html.DisplayNameFor(model => model.Qty)</label>
+	   <div class="col-md-4">  
+             <input id="@Html.IdFor(model => model.Qty)"
+				   name="@Html.NameFor(model => model.Qty)" 
+				   value="@Html.ValueFor(model => model.Qty)"
+				   tabindex="11" 
+				   class="easyui-numberspinner" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Qty)',
+								 required:true,formatter:numberformatter,
+                                 precision:2,
+                                 
+                                 "  />
+
+        </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--中标供应商-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.SupplierName)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.SupplierName)" 
+				   name="@Html.NameFor(model => model.SupplierName)" 
+				   value="@Html.ValueFor(model => model.SupplierName)"
+				   tabindex="12" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.SupplierName)',
+								 required:false, 
+                                 validType: 'length[0,50]'
+                                 " />
+       </div>
+				      <!--关联二级ID-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.RefId)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.RefId)" 
+				   name="@Html.NameFor(model => model.RefId)" 
+				   value="@Html.ValueFor(model => model.RefId)"
+				   tabindex="13" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.RefId)',
+								 required:false, 
+                                 validType: 'length[0,50]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--领说明-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Remark)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.Remark)" 
+				   name="@Html.NameFor(model => model.Remark)" 
+				   value="@Html.ValueFor(model => model.Remark)"
+				   tabindex="14" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Remark)',
+								 required:false, 
+                                 validType: 'length[0,512]'
+                                 " />
+       </div>
+				      <!--状态-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Status)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.Status)" 
+				   name="@Html.NameFor(model => model.Status)" 
+				   value="@Html.ValueFor(model => model.Status)"
+				   tabindex="15" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Status)',
+								 required:false, 
+                                 validType: 'length[0,20]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+   <!--参数-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Feature)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.Feature)" 
+				   name="@Html.NameFor(model => model.Feature)" 
+				   value="@Html.ValueFor(model => model.Feature)"
+				   tabindex="16" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Feature)',
+								 required:false, 
+                                 validType: 'length[0,500]'
+                                 " />
+       </div>
+				      <!--备注-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.Description)</label>
+		<div class="col-md-4">  
+			<input id="@Html.IdFor(model => model.Description)" 
+				   name="@Html.NameFor(model => model.Description)" 
+				   value="@Html.ValueFor(model => model.Description)"
+				   tabindex="17" 
+				   class="easyui-textbox" 
+                   style="width:100%"
+				   type="text" 
+				   data-options="prompt:'@Html.DisplayNameFor(model => model.Description)',
+								 required:false, 
+                                 validType: 'length[0,512]'
+                                 " />
+       </div>
+				          <!--end row-->
+	   <!-- begin row -->
+    <!--采购单-->
+        <label class="col-md-2 control-label">@Html.DisplayNameFor(model => model.PurchaseOrderId)</label>
+		<div class="col-md-4">   	
+            <input id="@Html.IdFor(model => model.PurchaseOrderId)"
+			       name="@Html.NameFor(model => model.PurchaseOrderId)"
+				   value="@Html.ValueFor(model => model.PurchaseOrderId)"
+                   tabindex="18" 
+              	   class="easyui-combobox"      
+                   style="width:100%"
+                   data-options="prompt:'@Html.DisplayNameFor(model => model.PurchaseOrderId)' ,
+						required:false ,
+						valueField: 'Id',
+						textField:  'PO' ,
+                        validateOnCreate:false,
+                        validateOnBlur:true,
+                        validType:'combocheck[\'#PurchaseOrderId\',\'请选择采购单\']',
+						url: '/Allocates/GetPurchaseOrders' ,
+						onSelect: function(item){
+						  //console.log(item);
+				        }">
+       </div>
+	   	             <!--end row-->
+	        </div>
+      </fieldset>
+   </form>
+
+<!--end form表单界面-->
+<!--========================================================================================-->
+     </div>
+    </div>
+    <!--end window body -->
+</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+    //判断新增编辑状态
+    var MODELSTATE = 'Added';
+    var allocateid = null;
+    function openallocatedetailwindow(data,state) {
+         MODELSTATE = state;
+         initallocatedetailview();
+         allocateid = (data.Id || 0);
+         $('#allocatedetailwindow').window('open');
+         $('#allocate_form').form('reset');
+         $('#allocate_form').form('load', data);
+             }
+  //删除当前记录
+  function deleteallocateitem() {
+    $.messager.confirm('确认', '你确定要删除该记录?', result => {
+      if (result) {
+        const url = `/Allocates/Delete/${allocateid}`;
+        $.get(url).done(res => {
+          if (res.success) {
+            toastr.success("删除成功");
+            $dg.datagrid('reload');
+            $('#allocatedetailwindow').window('close');
+          } else {
+            $.messager.alert('错误', res.err, 'error');
+          }
+        });
+      }
+    });
+  }
+    //async 保存数据
+    async function saveallocateitem() { 
+      const $allocateform = $('#allocate_form');
+      if ($allocateform.form('enableValidation').form('validate')) {
+            let allocate = $allocateform.serializeJSON();
+            let url = '/Allocates/Edit';
+            //判断是新增或是修改方法
+            if (MODELSTATE === 'Added') {
+                url = '/Allocates/Create';
+            }
+            var token = $('input[name="__RequestVerificationToken"]', $allocateform).val();
+            //$.messager.progress({ title: '请等待', msg: '正在保存数据...', interval:200});
+            $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: {
+                        __RequestVerificationToken: token,
+                        allocate:allocate
+                    },
+                    dataType: 'json',
+                    contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+                })
+                .done(response => {
+                    //$.messager.progress('close');
+                    if (response.success) {
+                        hook = false;
+                        $allocateform.form('disableValidation');
+                        $dg.datagrid('reload');
+                        $('#allocatedetailwindow').window("close");
+                        toastr.success("保存成功");  
+                    } else {
+                        $.messager.alert("错误",   response.err, "error");
+                    }
+                    })
+                .fail((jqXHR, textStatus, errorThrown) => {
+                       //$.messager.progress('close');
+                       $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+                    });
+        }
+    }
+    //关闭窗口
+    function closeallocatedetailwindow() {
+        $('#allocatedetailwindow').window('close');
+    }
+    //todo
+    function todo() {
+         console.log('todo.....');
+    }
+     //判断是否有没有保存的记录
+     function allocatehasmodified() {
+            return hook;
+
+     }
+
+
+function initallocatedetailview() {
+  //判断是否显示功能按钮
+  if (MODELSTATE === 'Added') {
+    $('#deleteitem-btn-group').hide();
+  } else {
+    $('#deleteitem-btn-group').show();
+  }
+ 
+//回车光标移动到下个输入控件
+    //如果是枚举类型需要把numberbox改成combobox
+    //领用数量
+	$('#Qty').numberbox('textbox').bind('keydown', function (e) {
+      if (e.keyCode == 13) {
+        $(e.target).emulateTab();
+      }
+    });
+    //日期类型 申请日期
+	$('#PODate').datebox('textbox').bind('keydown', function (e) {
+      if (e.keyCode == 13) {
+        $(e.target).emulateTab();
+      }
+    });
+    //日期类型 收货日期
+	$('#ReceivedDate').datebox('textbox').bind('keydown', function (e) {
+      if (e.keyCode == 13) {
+        $(e.target).emulateTab();
+      }
+    });
+    //日期类型 领用日期
+	$('#OuboundDate').datebox('textbox').bind('keydown', function (e) {
+      if (e.keyCode == 13) {
+        $(e.target).emulateTab();
+      }
+    });
+    //采购单默认外键使用combobox,也可以使用combogrid
+	$('#PurchaseOrderId').combobox('textbox').bind('keydown', function (e) {
+      if (e.keyCode == 13) {
+        $(e.target).emulateTab();
+      }
+    });
+}
+</script>
+

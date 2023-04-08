@@ -1,0 +1,747 @@
+﻿<!-- MAIN CONTENT -->
+<div id="content">
+  <div class="row">
+    <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+      <h1 class="page-title txt-color-blueDark"><i class="fa-fw fa fa-home"></i> Dashboard <span>> My Dashboard</span></h1>
+    </div>
+
+  </div>
+  <!-- widget grid -->
+  <section id="widget-grid" class="">
+    <div class="row">
+      @if (Request.IsAuthenticated && User.IsInRole("供应商"))
+      {
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-paper text-success"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+
+                  <div class="numbers">
+                    <p class="card-category">待投标</p>
+                    <p class="card-title" id="p1">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-refresh"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-check-2 text-warning"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+                  <div class="numbers">
+                    <p class="card-category">待确认</p>
+                    <p class="card-title" id="p2">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-calendar-o"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-bulb-63 text-danger"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+                  <div class="numbers">
+                    <p class=" card-category "><span class="text-danger">待发货</span></p>
+                    <p class="card-title" id="p3">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-clock-o"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-box-2 text-primary"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+                  <div class="numbers">
+                    <p class="card-category ">待结案</p>
+                    <p class="card-title" id="p4">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-refresh"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      else if (Request.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("厂商")))
+      {
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-paper text-success"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+
+                  <div class="numbers">
+                    <p class="card-category">询价中</p>
+                    <p class="card-title" id="p1">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-refresh"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-check-2 text-warning"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+                  <div class="numbers">
+                    <p class="card-category">待开标</p>
+                    <p class="card-title" id="p2">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-calendar-o"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-bulb-63 text-danger"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+                  <div class="numbers">
+                    <p class=" card-category "><span class="text-danger">待收货</span></p>
+                    <p class="card-title" id="p3">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-clock-o"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <div class="card card-stats">
+            <div class="card-body ">
+              <div class="row">
+                <div class="col-5 col-md-4">
+                  <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-box-2 text-primary"></i>
+                  </div>
+                </div>
+                <div class="col-7 col-md-8">
+                  <div class="numbers">
+                    <p class="card-category ">待结案</p>
+                    <p class="card-title" id="p4">
+                      0
+                    </p><p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer ">
+              <hr>
+              <div class="stats">
+                <i class="fa fa-refresh"></i> 更新
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+    <!-- row -->
+    <div class="row">
+      @if (Request.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("厂商")))
+      {
+        <article class="col-sm-12">
+          <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
+            <!-- widget options:
+            usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+            data-widget-colorbutton="false"
+            data-widget-editbutton="false"
+            data-widget-togglebutton="false"
+            data-widget-deletebutton="false"
+            data-widget-fullscreenbutton="false"
+            data-widget-custombutton="false"
+            data-widget-collapsed="true"
+            data-widget-sortable="false"
+            -->
+            <header>
+              <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+              <h2>最近作废采购单</h2>
+            </header>
+
+            <!-- widget div-->
+            <div>
+              <div class="jarviswidget-editbox">
+                <!-- This area used as dropdown edit box -->
+              </div>
+              <div class="widget-body no-padding">
+                <div class="table-responsive">
+                  <table id="purchaseorders_datagrid">
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </article>
+      }
+    </div>
+    <!-- end row -->
+    <!-- row -->
+
+    <div class="row">
+      @if (Request.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("供应商")))
+      {
+        <article class="col-sm-12">
+          <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
+            <!-- widget options:
+            usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+            data-widget-colorbutton="false"
+            data-widget-editbutton="false"
+            data-widget-togglebutton="false"
+            data-widget-deletebutton="false"
+            data-widget-fullscreenbutton="false"
+            data-widget-custombutton="false"
+            data-widget-collapsed="true"
+            data-widget-sortable="false"
+            -->
+            <header>
+              <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+              <h2>最近作废的投标记录</h2>
+            </header>
+
+            <!-- widget div-->
+            <div>
+              <div class="jarviswidget-editbox">
+                <!-- This area used as dropdown edit box -->
+              </div>
+              <div class="widget-body no-padding">
+                <div class="table-responsive">
+                  <table id="biddings_datagrid">
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </article>
+
+      }
+
+    </div>
+
+    <!-- end row -->
+
+  </section>
+  <!-- end widget grid -->
+
+</div>
+<!-- END MAIN CONTENT -->
+@section pagespecific {
+  <script src="~/Scripts/plugin/countup/countUp.min.js"></script>
+  <script src="@Fingerprint.Tag("/Scripts/smartadmin.easyui.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.easyui.component.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.extend.formatter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/locale/easyui-lang-zh_CN.js")"></script>
+  <script>
+    @if (Request.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("厂商")))
+   {
+     <text>
+    var $dg1 = $('#purchaseorders_datagrid');
+    $(() => {
+       $dg1.datagrid({
+      rownumbers: true,
+      idField: 'Id',
+      sortName: 'Id',
+      sortOrder: 'desc',
+      remoteFilter: true,
+      singleSelect: true,
+         url: '/PurchaseOrders/GetDestroyData',
+      method: 'get',
+      pagination: true,
+      clientPaging:false,
+      striped: true,
+      pageList: [10, 20, 50, 100, 500],
+
+      onBeforeLoad: function () {
+        //datagrid resize when jarvisWidgets resized.
+        const that = $(this);
+        $(window).on("resize.jarvisWidgets", () => {
+          that.datagrid('resize');
+        })
+      },
+
+
+     columns: [[
+         {    /*状态*/
+          field: 'Status',
+         title: '状态',
+          width: 90,
+          align: 'right',
+          hidden: false,
+          //formatter: statusformatter
+        },
+         {    /*申请部门*/
+          field: 'Dept',
+          title: '申请部门',
+          width: 100,
+          sortable: true,
+          resizable: true
+        },
+        {    /*申请科室*/
+          field: 'Section',
+          title: '申请科室',
+          width: 100,
+          sortable: true,
+          resizable: true
+        },
+        {    /*采购单号*/
+          field: 'PO',
+          title: 'PO',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+       },
+       {    /*采购类别*/
+         field: 'Category',
+         title: '采购类别',
+         width: 100,
+         sortable: true,
+         resizable: true
+       },
+        {    /*序号*/
+          field: 'LineNum',
+          title: '序号',
+          width: 65,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*品名*/
+          field: 'ProductName',
+          title: '品名',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*规格*/
+          field: 'Spec',
+          title: '规格规格',
+          width: 150,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+         {    /*参数*/
+          field: 'Feature',
+          title: '参数参数',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*单位*/
+          field: 'Unit',
+          title: '单位单位',
+          width: 60,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'Qty',
+          title: '数量',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+       },
+        {    /*科研号*/
+          field: 'GrantNo',
+          title: '科研号',
+          width: 120,
+          sortable: true,
+          resizable: true
+       },
+       {    /*备注*/
+         field: 'Reason',
+         title: '废标原因',
+         width: 200,
+         hidden: false,
+         sortable: true,
+         resizable: true
+       },
+        {    /*备注*/
+          field: 'Description',
+          title: '备注',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*业务联系人*/
+          field: 'Buyer',
+          title: '业务联系人',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*联系人电话*/
+          field: 'BuyerPhone',
+          title: '联系人电话',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {   /*下单日期*/
+          field: 'PODate',
+          title: '下单日期',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+
+
+
+
+
+
+      ]]
+    });
+
+    })
+
+     </text>
+   }
+
+   @if (Request.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("供应商")))
+   {
+     <text>
+    var $dg2 = $('#biddings_datagrid');
+    $(() => {
+      $dg2.datagrid({
+                        rownumbers:true,
+                        idField:'Id',
+                        sortName:'Id',
+                        sortOrder:'desc',
+                        remoteFilter: true,
+                        singleSelect: true,
+        url: '/Biddings/GetDestroyData',
+                        method: 'get',
+                        pagination: true,
+                        striped:true,
+                        pageList: [10, 20, 50, 100, 500],
+                        onBeforeLoad: function () {
+                           //datagrid resize when jarvisWidgets resized.
+                           const that = $(this);
+                           $(window).on("resize.jarvisWidgets", () => {
+                               that.datagrid('resize');
+                           })
+        },
+        columns: [[
+            {   /*投标时间*/
+                field:'BiddingDate',
+              title:'投标时间',
+                width:100,
+                align:'right',
+                hidden:false,
+                formatter:dateformatter,
+                sortable:true,
+                resizable:true
+            } ,
+            {    /*状态*/
+                 field:'Status',
+                 title:'状态',
+                 width:100,
+                 align:'right',
+                 hidden:false,
+            },
+            {    /*采购单号*/
+                 field:'PO',
+                 title:'采购单号',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*序号*/
+                 field:'LineNum',
+                 title:'序号',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*品名*/
+                 field:'ProductName',
+                 title:'品名',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*规格*/
+                 field:'Spec',
+              title:'规格',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*品牌*/
+                 field:'BrandName',
+              title:'投标品牌',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+        },
+            {    /*数量*/
+                 field:'Qty',
+                 title:'数量',
+                 width:100,
+                 align:'right',
+                 hidden:false,
+                formatter:numberformatter,
+                sortable:true,
+                resizable:true
+            },
+            {    /*单位*/
+                 field:'Unit',
+                 title:'单位',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*出价*/
+                 field:'BiddingPrice',
+                 title:'出价',
+                 width:100,
+                 align:'right',
+                 hidden:false,
+                formatter:numberformatter,
+                sortable:true,
+                resizable:true
+            },
+            {    /*总价*/
+                 field:'TotalPrice',
+                 title:'总价',
+                 width:100,
+                 align:'right',
+                 hidden:false,
+                formatter:numberformatter,
+                sortable:true,
+                resizable:true
+            },
+            {    /*备注*/
+                 field:'Description',
+                 title:'备注',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+          },
+          {    /*参数*/
+            field: 'Feature',
+            title: '参数',
+            width: 200,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+            {    /*业务联系人*/
+                 field:'Buyer',
+              title:'业务联系人',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*联系人电话*/
+                 field:'BuyerPhone',
+              title:'联系人电话',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*出价人*/
+                 field:'UserName',
+                 title:'出价人',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            }
+
+                 ]]
+           })
+    })
+
+     </text>
+   }
+  </script>>
+  <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $(() => {
+      @if (Request.IsAuthenticated && User.IsInRole("供应商"))
+      {
+        <text>
+        var p1 = @Dashboard.Instance.BCount(Auth.GetCompanyId());
+        var p2 = @Dashboard.Instance.ACount(Auth.GetCompanyId());
+        var p3 = @Dashboard.Instance.PCount(Auth.GetCompanyId());
+      var p4 = @Dashboard.Instance.SCount(Auth.GetCompanyId());
+      </text>
+      } else if (Request.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("厂商")))
+      {
+         <text>
+        var p1 = @Dashboard.Instance.ALLCount();
+        var p2 = @Dashboard.Instance.OCount();
+        var p3 = @Dashboard.Instance.RCount();
+      var p4 = @Dashboard.Instance.CCount();
+      </text>
+      }
+  const countUp1 = new CountUp('p1', p1, { duration: 1 });
+      if (!countUp1.error) {
+        countUp1.start();
+      } else {
+        console.error(countUp1.error);
+      }
+      const countUp2 = new CountUp('p2', p2, { duration: 1 });
+      if (!countUp2.error) {
+        countUp2.start();
+      } else {
+        console.error(countUp2.error);
+      }
+      const countUp3 = new CountUp('p3', p3, { duration: 1 });
+      if (!countUp3.error) {
+        countUp3.start();
+      } else {
+        console.error(countUp3.error);
+      }
+      const countUp4 = new CountUp('p4', p4, { duration: 1 });
+      if (!countUp4.error) {
+        countUp4.start();
+      } else {
+        console.error(countUp4.error);
+      }
+    })
+  </script>
+}

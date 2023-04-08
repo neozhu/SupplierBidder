@@ -1,0 +1,250 @@
+﻿﻿@model WebApp.Models.Inventory
+<!-- 弹出窗体form表单 -->
+<div id="allocatewindow" hidden="hidden" class="easyui-window"
+     title="下拨二级库"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:true,
+                    iconCls:'icon-more',
+                    onBeforeClose:function(){
+                      
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:450px;display:none">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          <button name="saveitembutton" onclick="confirmallocate()" class="btn btn-default">
+            <i class="fa fa-floppy-o"></i> 确认
+          </button>
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="container">
+    <div class="widget-body">
+      <form id="outform">
+
+        <!--Primary Key-->
+
+        <div class="table-responsive" style="margin-top:5px">
+          <table id="allocatetable" class="table table-bordered" style="table-layout:fixed">
+            <thead>
+              <tr>
+                <th width="100px">
+                  采购单号
+                </th>
+                <th width="50px">
+                  行号
+                </th>
+                <th>
+                  品名
+                </th>
+                <th>
+                  投标品牌
+                </th>
+                <th>
+                  规格
+                </th>
+                <th>
+                  参数
+                </th>
+                <th width="50">
+                  单位
+                </th>
+                <th width="80px">
+                  库存数量
+                </th>
+                <th width="110px">
+                  下拨数量
+                </th>
+                <th width="150px">
+                  下拨仓库
+                </th>
+                <th width="200px">选择入库产品</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </form>
+
+      <!--end form表单界面-->
+      <!--========================================================================================-->
+    </div>
+  </div>
+  <!--end window body -->
+</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+  var MODELSTATE = 'Added';
+  var inventoryid = null;
+  function openallocatewindow(data) {
+    $('#allocatetable > tbody').empty();
+    data.map(item => {
+      const tr = `<tr>
+          <td>
+            ${item.PO}
+          </td>
+          <td>
+            ${item.LineNum}
+          </td>
+          <td>
+              ${item.ProductName}
+          </td>
+          <td>
+            ${item.BrandName || ''}
+          </td>
+          <td>
+            ${item.Spec}
+          </td>
+          <td>
+            ${item.Feature || ''}
+          </td>
+          <td>
+              ${item.Unit}
+           </td>
+          <td>
+            ${item.Qty}
+          </td>
+          <td>
+             <input data-poid="${item.PurchaseOrderId}" data-id="${item.Id}" name="allocateqty" type="number" value="${item.Qty}" max="${item.Qty}"  class="form-control"/>
+          </td>
+          <td>
+            <select name="refloc"  class="form-control select2" data-minimum-results-for-search="Infinity" style="width:100%" ></select>
+          </td>
+          <td>
+            <select name="refid"  class="form-control select2" style="width:100%" ></select>
+          </td>
+        </tr>`
+      $('#allocatetable > tbody').append(tr);
+
+      
+      $('select[name="refloc"]').select2({
+        data: locdatasource.map(item => { return { id: item.text, text: item.text } })
+      })
+      $('select[name="refid"]').select2({
+        ajax: {
+          url: '/Allocates/GetSelectData',
+          delay: 500,
+          processResults: function (data) {
+            console.log(data)
+            var result = data.map(n => { return { text: n.ProductName, id: n.Id, product: n } });
+            return {
+              results: result
+            };
+          }
+        },
+        templateResult: function (data,container) {
+          console.log(data, container)
+          if (data.loading) {
+            return data.text;
+          }
+          //data = data.data;
+          if (data.product) {
+            var $container = $(
+              "<address>" +
+              "<strong class='name'></strong>" +
+              "<div class='description'></div>" +
+              "<div class='statistics'>" +
+              "<div class='purity'> </div>" +
+              "<div class='suppliername'> </div>" +
+              "<div class='customername'> </div>" +
+              "</div>" +
+              "</address>"
+            );
+            $container.find(".name").text(data.product.ProductName);
+            $container.find(".description").text(data.product.CasNO + " " + data.product.Volume + " " + data.product.Unit);
+            $container.find(".purity").append(data.product.Purity) ;
+            $container.find(".suppliername").append(data.product.SupplierName);
+            $container.find(".customername").append(data.product.CustomerName);
+
+            return $container;
+          }
+        },
+      })
+    });
+    $('#allocatewindow').window('open');
+
+
+  }
+
+  //async 保存数据
+  async function confirmallocate() {
+    var msg = "";
+    var data = [];
+
+    $('#allocatetable > tbody > tr').each((index, el) => {
+      //console.log(el, index);
+      var po = $(el).find('td').text();
+      var qty = parseFloat($(el).find('input[name="allocateqty"]').val());
+      var max = parseFloat($(el).find('input[name="allocateqty"]').attr('max'));
+      var id = $(el).find('input[name="allocateqty"]').data("id");
+      var poid = $(el).find('input[name="allocateqty"]').data("poid");
+      var refid = $(el).find('select[name="refid"]').val();
+      var loc = $(el).find('select[name="refloc"]').val();
+      var productname = $($(el).find('select[name="refid"] option:selected')).text();
+      //console.log(qty, max, id, poid, remark)
+      if (qty > max) {
+        msg += `${po} 下拨数量 ${qty} 大于库存量,不允许操作.`
+      } else {
+        data.push({
+          PurchaseOrderId: poid,
+          InvId: id,
+          AllocateQty: qty,
+          RefId: refid,
+          ProductName: productname,
+          Loc:loc
+        })
+      }
+    });
+    if (msg.length > 0) {
+      $.messager.alert('提示', msg);
+      return;
+    }
+  
+    $.post('/Inventories/Allocated', {request:data})
+        .done(response => {
+          //$.messager.progress('close');
+          if (response.success) {
+            hook = false;
+            reload();
+            $('#allocatewindow').window("close");
+            toastr.success("保存成功");
+          } else {
+            $.messager.alert("错误", response.err, "error");
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          //$.messager.progress('close');
+          $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+        });
+    
+  }
+
+
+</script>
+
