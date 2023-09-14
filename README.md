@@ -1,7 +1,7 @@
 ## Inquiry System Business Requirements
 
 ### Demo
-[https://supplier.i247365.net/](https://purchase.blazorserver.com/)
+[https://purchase.blazorserver.com](https://purchase.blazorserver.com/)
    + login user / password
    + demo / 123456
 ### screen capture
