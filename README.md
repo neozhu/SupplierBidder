@@ -4,8 +4,10 @@
 
 [https://purchase.blazorserver.com](https://purchase.blazorserver.com/)
 
-   + login user / password
+   + login as buyer 
    + demo / 123456
+   + login as supplier 
+   + supplier / 123456
 ### screen capture
 ![RUNOOB 图标](doc/1.png)
 ![RUNOOB 图标](doc/2.png)
