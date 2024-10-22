@@ -1,0 +1,81 @@
+﻿﻿@model WebApp.Models.CategoryAllocation
+<!-- begin master section -->
+<div class="row">
+    <div class="col col-lg-12 col-md-12">
+<!--begin categoryallocation form  -->
+<form id="categoryallocation_form" class="smart-form" method="post" novalidate >
+@Html.AntiForgeryToken()
+  <input type="hidden" id="@Html.IdFor(model => model.Id)" 
+                       name="@Html.NameFor(model => model.Id)" 
+                       value="@Html.ValueFor(model => model.Id)" />
+ <fieldset>
+     <div class="row">
+            <!--采购类别-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.CategoryId)</span> </label>
+            <label class="label">
+			      @Html.DisplayFor(model => model.CategoryId)
+			</label>
+            </section>
+			 
+	    
+			              <!--采购类别-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.CategoryName)</span> </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.CategoryName)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+            <!--合格供应商-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.CompanyId)</span> </label>
+            <label class="label">
+			      @Html.DisplayFor(model => model.CompanyId)
+			</label>
+            </section>
+			 
+	    
+			              <!--厂商名称-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.CompanyName) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.CompanyName)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--备注-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Remark) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Remark)
+            </label>
+            </section>
+ 		 
+	    
+			  			  <!--是否禁止-->
+              <section class="col col-6">
+              <label class="label"><span class="required">@Html.DisplayNameFor(model => model.IsDisabled)</span> </label>
+              <label class="label">
+                @Html.DisplayFor(model => model.IsDisabled)
+            </label>
+            </section>
+		 
+	   </div>
+	    
+	    
+</fieldset>
+</form>
+<!-- end categoryallocation form  -->
+</div>
+</div>
+<!-- end master section -->
+<!--========================================================================================-->
+
+

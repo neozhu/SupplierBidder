@@ -1,0 +1,339 @@
+﻿﻿@model WebApp.Models.ViewModel.BidViewModel
+<!-- 弹出窗体form表单 -->
+<div id="batchbidwindow" hidden="hidden" class="easyui-window"
+     title="出价"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    footer:'#windowfooter',
+                    closeDuration:200,
+                    closeAnimation:'slide',
+                    openDuration:300,
+                    openAnimation:'slide',
+                    onBeforeClose:function(){
+                      var that = $(this);
+                      if(batchbidhasmodified()){
+                        $.messager.confirm('确认','你确定要放弃保存修改的记录?',function(r){
+                        if (r){
+                          var opts = that.panel('options');
+                          var onBeforeClose = opts.onBeforeClose;
+                          opts.onBeforeClose = function(){};
+                          that.panel('close');
+                          opts.onBeforeClose = onBeforeClose;
+                          hook = false;
+                        }
+                        });
+                        return false;
+                      }
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:1020px;height:420px">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          
+        </div>
+        
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closebatchbidwindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="widget-body">
+    <form id="batchbid_form"
+          class="easyui-form form-horizontal padding-10"
+          method="post"
+          data-options="novalidate:true,
+                            onChange: function(target){
+                              hook = true;
+                              $('button[name*=\'saveitembutton\']').prop('disabled', false);
+                             },
+                             onLoadSuccess:function(data){
+                               hook = false;
+                               $('button[name*=\'saveitembutton\']').prop('disabled', true);
+                             }">
+      @Html.AntiForgeryToken()
+      <!--Primary Key-->
+      @Html.HiddenFor(model => model.Id)
+      <fieldset>
+        <!-- begin row -->
+        <legend>采购单信息</legend>
+        <!--采购单号-->
+        <div class="form-group  col-md-12">
+           <div class="table-responsive">
+             <table id="table1" class="table table-bordered table-hover" >
+              
+               <thead>
+                 <tr>
+                   <th>操作</th>
+                   <th>序号</th>
+                   <th>科研号</th>
+                   <th>品名</th>
+                   <th>建议品牌</th>
+                   <th>规格</th>
+                   <th>参数</th>
+                   <th>数量</th>
+                   <th>单位</th>
+                   <th>备注</th>
+                   <th class="text-success">已出价</th>
+                 </tr>
+               </thead>
+               <tbody>
+                
+               </tbody>
+             </table>
+          </div>
+        </div>
+        
+      </fieldset>
+      
+    </form>
+
+    <!--end form表单界面-->
+    <!--========================================================================================-->
+  </div>
+  <!--end window body -->
+</div>
+<div id="windowfooter" style="padding:5px;">&nbsp;</div>
+<style>
+  #table1 .hidden_row
+{
+ display:none;
+}
+</style>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+
+  function openbatchbidwindow(data) {
+ 
+    $('#batchbidwindow').window('open');
+    $("#table1 tbody").empty();
+    data.forEach((item,i) => {
+      const row1 = `<tr>
+                   <td><button onClick="expandrow(${item.Id}) " class="btn btn-default btn-sm btn-success">出价</button></td>
+                   <td>${item.LineNum}</td>
+                   <td>${item.GrantNo}</td>
+                   <td>${item.ProductName}</td>
+                   <td>${item.BrandName}</td>
+                   <td>${item.Spec}</td>
+                   <td>${item.Feature}</td>
+                   <td>${item.Qty}</td>
+                   <td>${item.Unit}</td>
+                   <td>${item.Description}</td>
+                   <td class="text-success" id="td_lastprice_${item.Id}">0.00 </td>
+                 </tr>
+                <tr id="table_row_${item.Id}" class="hidden_row">
+                <td colspan=11 id="container_${item.Id}">
+                    <div class="widget-body">
+											<form id="table_row_form_${item.Id}" method="post" novalidate="novalidate" class="bv-form">
+                        <input type="hidden" name="PurchaseOrderId" value="${item.Id}">
+                        <fieldset>
+													<legend style=" margin-bottom: 0px;">
+														出价 <span style="color:red">询价截至时间:${item.DueDate}</span>
+													</legend>
+
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-12 col-md-4 has-feedback">
+																<label class="control-label">投标品牌</label>
+																<input type="text" class="form-control" name="BrandName" value="${item.BrandName}">
+															  
+                              </div>
+															<div class="col-sm-12 col-md-4 has-feedback">
+																<label class="control-label">规格</label>
+																<input type="text" class="form-control" name="Spec" value="${item.Spec}">
+															</div>
+
+															<div class="col-sm-12 col-md-4 has-feedback">
+																<label class="control-label">参数</label>
+																<input type="text" class="form-control" name="Feature" value="${item.Feature}">
+															</div>
+                            
+                             <div class="col-sm-12 col-md-12 has-feedback">
+																<label class="control-label">备注</label>
+																<input type="text" class="form-control" name="Description" value="${item.Description}">
+															</div>
+														</div>
+													</div>
+                          <div class="form-group">
+														<div class="row">
+                               <div class="col-sm-12 col-md-3 has-feedback">
+																<label class="control-label">供货周期(天)</label>
+																<input type="number" reu class="form-control" required name="DeliveryCycle" value="">
+															  
+                              </div>
+															<div class="col-sm-12 col-md-3 has-feedback">
+																<label class="control-label">数量</label>
+																<input type="number" readonly class="form-control" name="Qty" value="${item.Qty}">
+															  
+                              </div>
+															<div class="col-sm-12 col-md-3 has-feedback">
+																<label class="control-label">投标价</label>
+																<input type="number" class="form-control" onchange="caltotalprice(${item.Id})" name="BiddingPrice" value="0.00">
+															</div>
+
+															<div class="col-sm-12 col-md-3 has-feedback">
+																<label class="control-label">总价</label>
+																<input type="number" readonly class="form-control" name="TotalPrice" value="0.00">
+															</div>
+														</div>
+													</div>
+												</fieldset>
+													<div class="row">
+														<div class="col-md-12">
+															<button onclick="bided(${item.Id})" class="btn btn-default  btn-sm pull-right" type="button">
+																<i class="fa fa-gavel"></i>
+																出价
+															</button>
+														</div>
+													</div>
+										
+
+											</form>
+                 
+                    <div class="row" >
+                      <div class="col-md-12">我的出价记录
+                      <table class="table table-bordered" id="table_record_${item.Id}">
+                        
+                      </table>
+                    </div>
+										</div>
+                </td>
+                </tr>`
+      
+      $("#table1 tbody").append(row1);
+   
+
+    })
+  }
+  //出价
+  function bided(id) {
+    const $bidform = $(`#table_row_form_${id}`);
+    let request = $bidform.serializeJSON();
+    console.log(request);
+    if (request.BiddingPrice <= 0) {
+      $.messager.alert('提示', '请输入你的出价金额');
+      $(`#table_row_form_${id} input[name=BiddingPrice]`).focus();
+      return;
+    } else if (request.DeliveryCycle <= 0) {
+      $.messager.alert('提示', '请输入交货周期');
+      $(`#table_row_form_${id} input[name=DeliveryCycle]`).focus();
+    }
+    let url = '/PurchaseOrders/Bid';
+    $.messager.progress({ title: '请等待', msg: '正在保存数据...', interval: 200 });
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: {
+        request: request
+      },
+      dataType: 'json',
+      contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+    })
+      .done(response => {
+        $.messager.progress('close');
+        if (response.success) {
+          hook = false;
+          loadbiddingrecord(request.PurchaseOrderId);
+          reload();
+          toastr.success("出价成功");
+        } else {
+          $.messager.alert("错误", response.err, "error");
+        }
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        $.messager.progress('close');
+        $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+      });
+  }
+  //计算总价
+  function caltotalprice(id) {
+     const qty = parseFloat($(`#table_row_form_${id} input[name=Qty]`).val());
+    const price = parseFloat($(`#table_row_form_${id} input[name=BiddingPrice]`).val());
+    const total = qty * price;
+    $(`#table_row_form_${id} input[name=TotalPrice]`).val(total)
+  }
+  function expandrow(id) {
+    $(`#table_row_${id}`).toggle();
+    const show = $(`#table_row_${id}`).is(':visible');
+    if (show) {
+      loadbiddingrecord(id)
+    }
+
+  }
+  async function loadbiddingrecord(id) {
+    $(`#table_record_${id}`).empty();
+    $(`#table_record_${id}`).append(`<thead><tr>
+          <td>记录</td>
+          <td>出价时间</td>
+          <td>投标品牌</td>
+          <td>投标规格</td>
+          <td>投标参数</td>
+          <td>单位</td>
+          <td>数量</td>
+          <td>投标价</td>
+          <td>总价</td>
+    <td>交货周期</td>
+          <td>投标备注</td>
+         </tr></thead><tbody></tbody>`)
+    
+    const result = await $.get(`/Biddings/GetBidingHistoryWithMe?purchaseorderid=${id}`);
+    result.forEach(item => {
+      $(`#table_record_${id} tbody`).append(`<tr>
+          <td>${item.Id}</td>
+          <td>${moment(item.BiddingDate).format('MM-DD HH:mm')}</td>
+          <td>${item.BrandName}</td>
+          <td>${item.Spec}</td>
+          <td>${item.Feature}</td>
+          <td>${item.Unit}</td>
+          <td>${numeral(item.Qty).format('0,0.0')}</td>
+          <td>${numeral(item.BiddingPrice).format('0,0.00')}</td>
+          <td>${numeral(item.TotalPrice).format('0,0.00')}</td>
+          <td>${item.DeliveryCycle}</td>
+          <td>${item.Description}</td>
+         </tr>`)
+      $(`#td_lastprice_${id}`).html(numeral(item.BiddingPrice).format('0,0.00'))
+      
+    })
+  
+  }
+  
+  //关闭窗口
+  function closebatchbidwindow() {
+    $('#batchbidwindow').window('close');
+  }
+  //todo
+
+  //判断是否有没有保存的记录
+  function batchbidhasmodified() {
+    return hook;
+
+  }
+
+
+  
+</script>
+

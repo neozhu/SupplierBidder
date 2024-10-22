@@ -1,0 +1,155 @@
+﻿﻿@model WebApp.Models.ViewModel.BidViewModel
+<!-- 弹出窗体form表单 -->
+<div id="changeduedatewindow" hidden="hidden" class="easyui-window"
+     title="修改询价截至日期"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    footer:'#windowfooter',
+                    closeDuration:200,
+                    closeAnimation:'slide',
+                    openDuration:300,
+                    openAnimation:'slide',
+                    onBeforeClose:function(){
+                      
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:1020px;height:420px">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          
+        </div>
+        
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closechangeduedatewindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="widget-body">
+    <form class="easyui-form form-horizontal padding-10">
+      <!--采购单号-->
+      <fieldset>
+        <div class="form-group  col-md-12">
+          <div class="table-responsive">
+            <table id="changetable" class="table table-bordered table-hover">
+
+              <thead>
+                <tr>
+                  <th>采购单号</th>
+                  <th>序号</th>
+                  <th>货号</th>
+                  <th>品名</th>
+                  <th>数量</th>
+                  <th>已投标人数</th>
+                  <th>原截至日期</th>
+                  <th>调整后的日期</th>
+                  <th></th>
+
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <!--end form表单界面-->
+    <!--========================================================================================-->
+  </div>
+  <!--end window body -->
+</div>
+<div id="windowfooter" style="padding:5px;">&nbsp;</div>
+<style>
+  #table1 .hidden_row
+{
+ display:none;
+}
+</style>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+
+  function openchangeduedatewindow(data) {
+ 
+    $('#changeduedatewindow').window('open');
+    $("#changetable tbody").empty();
+    data.forEach((item,i) => {
+      const row1 = `<tr>
+                   <td>${item.PO}</td>
+                   <td>${item.LineNum}</td>
+                   <td>${item.ProductNo}</td>
+                   <td>${item.ProductName}</td>
+                   <td>${item.Qty} / ${item.Unit}</td>
+                   <td>${item.BiddingUsers} / ${item.BiddingTime}</td>
+                   <td id="tdduedate_${item.Id}">${moment(item.DueDate).format('YYYY-MM-DD HH:mm')}</td>
+                   <td><input class="form-control" id="newduedate_${item.Id}" type="datetime-local"></td>
+                   <td><button onClick="changedate(${item.Id}) " class="btn btn-default btn-sm btn-danger">修改</button></td>
+                  
+                 </tr>
+               `
+      
+      $("#changetable tbody").append(row1);
+   
+
+    })
+  }
+  function changedate(id) {
+
+    var dt = $(`#changetable tbody #newduedate_${id}`).val();
+    var now = moment().startOf('day');
+    if (dt && moment(dt) >= now) {
+      $.get(`/PurchaseOrders/ChagneDueDate?id=${id}&duedate=${dt}`).done(res => {
+        $(`#changetable tbody #tdduedate_${id}`).html(moment(dt).format('YYYY-MM-DD HH:mm'));
+        $(`#changetable tbody #newduedate_${id}`).val('');
+        reload();
+      })
+
+    } else {
+      $.messager.alert('提示', '请输入有效的截至日期');
+    }
+    console.log(dt, id);
+  }
+
+  
+  
+  
+  //关闭窗口
+  function closechangeduedatewindow() {
+    $('#changeduedatewindow').window('close');
+  }
+  //todo
+
+  //判断是否有没有保存的记录
+  function batchbidhasmodified() {
+    return hook;
+
+  }
+
+
+  
+</script>
+

@@ -1,0 +1,49 @@
+﻿﻿@model WebApp.Models.Contact
+<!-- begin master section -->
+<div  class="main-form">
+<!--begin contact form  -->
+<form id="contact_form" method="post" novalidate="novalidate" >
+@Html.AntiForgeryToken()
+   @Html.HiddenFor(x=>x.Id)
+ <fieldset>
+ <div class="form-group form-group-sm">
+      <div class="row">
+
+        <!--联系人名称-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label"><span class="required">@Html.DisplayNameFor(model => model.Name)</span> </label>
+			@Html.EditorFor(x => x.Name, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.Name) } })
+      
+         </div>
+
+        <!--联系电话-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label">@Html.DisplayNameFor(model => model.PhoneNumber) </label>
+			@Html.EditorFor(x => x.PhoneNumber, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.PhoneNumber) } })
+      
+         </div>
+
+        <!--微信-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label">@Html.DisplayNameFor(model => model.WeChat) </label>
+			@Html.EditorFor(x => x.WeChat, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.WeChat) } })
+      
+         </div>
+
+        <!--其它-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label">@Html.DisplayNameFor(model => model.Other) </label>
+			@Html.EditorFor(x => x.Other, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.Other) } })
+      
+         </div>
+	    
+   </div>
+  </div>
+</fieldset>
+</form>
+<!-- end contact form  -->
+</div>
+
+<!-- end master section -->
+<!--========================================================================================-->
+

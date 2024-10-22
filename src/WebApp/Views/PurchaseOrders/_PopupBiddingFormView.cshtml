@@ -1,0 +1,269 @@
+﻿﻿@model WebApp.Models.ViewModel.BiddingViewModel
+<!-- 弹出窗体form表单 -->
+<div id="biddingwindow" hidden="hidden" class="easyui-window"
+     title="发标"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    footer:'#windowfooter',
+                    closeDuration:200,
+                    closeAnimation:'slide',
+                    openDuration:300,
+                    openAnimation:'slide',
+                    onBeforeClose:function(){
+                      var that = $(this);
+                      if(biddinghasmodified()){
+                        $.messager.confirm('确认','你确定要放弃保存修改的记录?',function(r){
+                        if (r){
+                          var opts = that.panel('options');
+                          var onBeforeClose = opts.onBeforeClose;
+                          opts.onBeforeClose = function(){};
+                          that.panel('close');
+                          opts.onBeforeClose = onBeforeClose;
+                          hook = false;
+                        }
+                        });
+                        return false;
+                      }
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:460px">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          <button name="saveitembutton" onclick="todobinding()" class="btn btn-default">
+            <i class="fa fa-flag-o"></i> 发标
+          </button>
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closebiddingwindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="widget-body">
+    <form id="bidding_form"
+          class="easyui-form form-horizontal padding-10"
+          method="post"
+          data-options="novalidate:true,
+                            onChange: function(target){
+                              hook = true;
+                              $('button[name*=\'saveitembutton\']').prop('disabled', false);
+                             },
+                             onLoadSuccess:function(data){
+                               hook = false;
+                               $('button[name*=\'saveitembutton\']').prop('disabled', true);
+                             }">
+      @Html.AntiForgeryToken()
+      <!--Primary Key-->
+     <fieldset>
+        <!-- begin row -->
+        <legend>发标</legend>
+        <div class="form-group  col-md-12">
+          <div class="col-md-6">
+           
+            <div   style="display: flex; margin-bottom: 5px">
+              <label class="control-label" style="padding-top:0px">采购类别:</label>
+                <div class="" id="selectedcategory">
+
+                  </div>
+            </div>
+              <div id="supplierlist" class="easyui-datalist" title="可竞标的供应商" style="width:300px;height:250px"
+                   data-options="
+            checkbox: false,
+               valueField:'CompanyId',
+               textField:'CompanyName',
+            selectOnCheck: false,
+            onLoadSuccess:function(){
+                 console.log('onLoadSuccess')
+
+                 },
+            onBeforeSelect: function(){return false;}
+            ">
+              </div>
+</div>
+          <div class="col-md-6">
+            <div class="form-group  col-md-12">
+              <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.DocNo)</label>
+              <div class="col-md-9">
+                <input id="@Html.IdFor(model => model.DocNo)"
+                       name="@Html.NameFor(model => model.DocNo)"
+                       value="@Html.ValueFor(model => model.DocNo)"
+                       tabindex="16"
+                       class="easyui-textbox"
+                       style="width:100%"
+                       type="text"
+                       data-options="prompt:'@Html.DisplayNameFor(model => model.DocNo)',
+								 required:true,readonly:true" />
+              </div>
+            </div>
+            <div class="form-group  col-md-12">
+              <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.BiddingDate)</label>
+              <div class="col-md-9">
+                <input id="@Html.IdFor(model => model.BiddingDate)"
+                       name="@Html.NameFor(model => model.BiddingDate)"
+                       value="@Html.ValueFor(model => model.BiddingDate)"
+                       tabindex="16"
+                       class="easyui-datetimebox"
+                       style="width:100%"
+                       type="text"
+                       data-options="prompt:'@Html.DisplayNameFor(model => model.BiddingDate)',
+								 required:true,
+								 formatter:datetimeformatter" />
+              </div>
+            </div>
+
+            <!--截至日期-->
+            <div class="form-group  col-md-12">
+              <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.DueDate)</label>
+              <div class="col-md-9">
+                <input id="@Html.IdFor(model => model.DueDate)"
+                       name="@Html.NameFor(model => model.DueDate)"
+                       value="@Html.ValueFor(model => model.DueDate)"
+                       tabindex="17"
+                       class="easyui-datetimebox"
+                       style="width:100%"
+                       type="text"
+                       data-options="prompt:'@Html.DisplayNameFor(model => model.DueDate)',
+								 required:true,
+								 formatter:datetimeformatter" />
+              </div>
+            </div>
+          </div>
+          </div>
+</fieldset>
+      
+
+    </form>
+
+    <!--end form表单界面-->
+    <!--========================================================================================-->
+  </div>
+  <!--end window body -->
+</div>
+<div id="windowfooter" style="padding:5px;">&nbsp;</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+  var MODELSTATE = 'Added';
+  var selectedid = null;
+  async function openbiddingwindow(data, selectedcategory, reason) {
+    $('button[name="saveitembutton"]').prop('disabled', true);
+    selectedid = data;
+    $('#biddingwindow').window('open');
+    $('#bidding_form').form('reset');
+    $('#bidding_form').form('load', data);
+    //$('#supplierlist').datalist('checkAll');
+    $('#selectedcategory').empty();
+    selectedcategory.forEach(item => {
+      if (item && item.length>0) {
+        const label = ` <span class="label label-success">${item}</span>`;
+        $('#selectedcategory').append(label);
+      }
+    });
+
+    const key = await $.get('/PurchaseOrders/GetDocNo');
+    $('#bidding_form #DocNo').textbox('setValue', key.key);
+    $('#bidding_form #BiddingDate').datetimebox('setValue', moment().format('YYYY-MM-DD HH:mm:ss'));
+    if (reason.length == 0) {
+      //获取可竞标的供应商
+      const list = await $.post('/CategoryAllocations/GetSupplierList', { categoryname: selectedcategory });
+      //console.log(list)
+      $('#supplierlist').datalist('loadData', list)
+    } else {
+      //获取同价竞标的供应商
+      const list = await $.get(`/PurchaseOrders/GetSuppliers/${data[0]}`);
+      //console.log(list)
+      $('#supplierlist').datalist('loadData', list)
+    }
+    $('button[name="saveitembutton"]').prop('disabled', false);
+  }
+
+  //async 保存数据
+  async function todobinding() {
+    const $biddingform = $('#bidding_form');
+
+    const checked = $('#supplierlist').datalist('getRows').length;
+    if (checked <= 0) {
+      $.messager.alert('提示', '没有合格的供应商');
+      return;
+    }
+    if ($biddingform.form('enableValidation').form('validate') && checked>0 ) {
+      let viewmodel = $biddingform.serializeJSON();
+      const supplierid = $('#supplierlist').datalist('getRows').map(item => item.CompanyId);
+      console.log(supplierid);
+      viewmodel.PurcshaseOrderId = selectedid;
+      viewmodel.SupplierId = supplierid;
+      let url = '/PurchaseOrders/DoBidding';
+      //判断是新增或是修改方法
+      var token = $('input[name="__RequestVerificationToken"]', $biddingform).val();
+      $.messager.progress({ title: '请等待', msg: '正在保存数据...', interval: 200 });
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+          __RequestVerificationToken: token,
+          viewmodel: viewmodel
+        },
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+      })
+        .done(response => {
+          $.messager.progress('close');
+          if (response.success) {
+            hook = false;
+            $biddingform.form('disableValidation');
+            $dg.datagrid('uncheckAll');
+            $dg.datagrid('reload');
+            $('#biddingwindow').window("close");
+            toastr.success("保存成功");
+          } else {
+            $.messager.alert("错误", response.err, "error");
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          $.messager.progress('close');
+          $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+        });
+    }
+  }
+  //关闭窗口
+  function closebiddingwindow() {
+    $('#biddingwindow').window('close');
+  }
+  //todo
+  function todo() {
+    console.log('todo.....');
+  }
+  //判断是否有没有保存的记录
+  function biddinghasmodified() {
+    return hook;
+
+  }
+
+
+
+</script>
+

@@ -1,0 +1,203 @@
+﻿﻿@model WebApp.Models.Inventory
+<!-- 弹出窗体form表单 -->
+<div id="receiptwindow" hidden="hidden" class="easyui-window"
+     title="收货确认"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:true,
+                    iconCls:'icon-more',
+                    onBeforeClose:function(){
+
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:450px;display:none">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          <button name="saveitembutton" onclick="confirmReceipt()" class="btn btn-default">
+            <i class="fa fa-floppy-o"></i> 确认
+          </button>
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="container">
+    <div class="widget-body">
+      <form id="outform">
+        <div class="table-responsive" style="margin-top:5px">
+          <table id="receipttable" class="table table-bordered" style="table-layout:fixed">
+            <thead>
+              <tr>
+                <th width="100px">
+                  采购单号
+                </th>
+                <th width="50px">
+                  行号
+                </th>
+                <th>
+                  品名
+                </th>
+                <th>
+                  规格
+                </th>
+                <th>
+                  参数
+                </th>
+                <th width="50">
+                  单位
+                </th>
+                <th>
+                  订单数量/未收数量
+                </th>
+                <th width="90px">
+                  收货数量
+                </th>
+                <th width="110px">
+                  出货单号
+                </th>
+                <th width="160px">
+                  供应商
+                </th>
+   
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </form>
+
+      <!--end form表单界面-->
+      <!--========================================================================================-->
+    </div>
+  </div>
+  <!--end window body -->
+</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+  var MODELSTATE = 'Added';
+  var inventoryid = null;
+  function openreceiptwindow(data) {
+    $('#receipttable > tbody').empty();
+    data.map(item => {
+      const tr = `<tr>
+          <td>
+            ${item.PO}
+          </td>
+          <td>
+            ${item.LineNum}
+          </td>
+          <td>
+              ${item.ProductName}
+          </td>
+          <td>
+            ${item.Spec || ''}
+          </td>
+          <td>
+            ${item.Feature || ''}
+          </td>
+          <td>
+              ${item.Unit}
+           </td>
+          <td>
+           ${item.Qty} / ${item.OpenQty||item.Qty}
+          </td>
+          <td>
+             <input  data-id="${item.Id}" name="receiptqty" type="number" value="" max="${item.OpenQty || item.Qty}"  class="form-control"/>
+          </td>
+          <td>
+            <input  data-id="${item.Id}" name="sonumber" type="text" value="${item.SO||''}" ${(item.SO==null?"":"readonly")}  class="form-control"/>
+          </td>
+          <td>
+           <input  data-id="${item.Id}" name="suppliername" type="text" value="${item.SupplierName||''}"   class="form-control"/>
+          </td>
+
+  
+        </tr>`
+      $('#receipttable > tbody').append(tr);
+    });
+    $('#receiptwindow').window('open');
+
+
+  }
+
+  //async 保存数据
+  async function confirmReceipt() {
+    var msg = "";
+    var data = [];
+
+    $('#receipttable > tbody > tr').each((index, el) => {
+      //console.log(el, index);
+      var po = $(el).find('td').text();
+      var receiptqty = parseFloat($(el).find('input[name="receiptqty"]').val());
+      var max = parseFloat($(el).find('input[name="receiptqty"]').attr('max'));
+      var id = $(el).find('input[name="receiptqty"]').data("id");
+      var suppliername = $(el).find('input[name="suppliername"]').val();
+      var sonumber = $(el).find('input[name="sonumber"]').val();
+      //console.log(qty, max, id, poid, remark)
+      if (receiptqty > max) {
+        msg += `${po} 收货数量 ${receiptqty} 大于未收数量,不允许操作.`
+      }
+      else if (receiptqty == null || receiptqty <= 0) {
+        msg += `${po} 收货数量 ${qty} 必须大于 0 `
+      } else if (suppliername == '' || sonumber == '') {
+        msg += `${po} 出货单号,供应商名称不能为空 `
+      }
+      else {
+        data.push({
+          PurchaseOrderId: id,
+          ReceiptQty: receiptqty,
+          SupplierName: suppliername,
+          SO: sonumber,
+        })
+      }
+    });
+    if (msg.length > 0) {
+      $.messager.alert('提示', msg);
+      return;
+    }
+
+    $.post('/PurchaseOrders/Receipt', { request:data})
+        .done(response => {
+          //$.messager.progress('close');
+          if (response.success) {
+            hook = false;
+            reload();
+            $('#receiptwindow').window("close");
+            toastr.success("保存成功");
+          } else {
+            $.messager.alert("错误", response.err, "error");
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          //$.messager.progress('close');
+          $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+        });
+
+  }
+
+
+</script>
+

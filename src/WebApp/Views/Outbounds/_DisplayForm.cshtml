@@ -1,0 +1,215 @@
+﻿﻿@model WebApp.Models.Outbound
+<!-- begin master section -->
+<div class="row">
+    <div class="col col-lg-12 col-md-12">
+<!--begin outbound form  -->
+<form id="outbound_form" class="smart-form" method="post" novalidate >
+@Html.AntiForgeryToken()
+  <input type="hidden" id="@Html.IdFor(model => model.Id)" 
+                       name="@Html.NameFor(model => model.Id)" 
+                       value="@Html.ValueFor(model => model.Id)" />
+ <fieldset>
+     <div class="row">
+			              <!--采购单号-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.PO)</span> </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.PO)
+            </label>
+            </section>
+ 		 
+	    
+			              <!--序号-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.LineNum)</span> </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.LineNum)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--申请日期-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.PODate) </label>
+            <label class="label">
+            
+			@Html.DisplayFor(model => model.PODate)
+			    </label>
+            </section>
+			  		 
+	    
+			              <!--收货日期-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.ReceivedDate) </label>
+            <label class="label">
+            
+			@Html.DisplayFor(model => model.ReceivedDate)
+			    </label>
+            </section>
+			  		 
+	   </div>
+	    
+     <div class="row">
+			              <!--领用日期-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.OuboundDate)</span> </label>
+            <label class="label">
+            
+			@Html.DisplayFor(model => model.OuboundDate)
+			    </label>
+            </section>
+			  		 
+	    
+			              <!--领用人-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.RecordUser) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.RecordUser)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--货号-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.ProductNo) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.ProductNo)
+            </label>
+            </section>
+ 		 
+	    
+			              <!--品名-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.ProductName)</span> </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.ProductName)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--规格-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Spec) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Spec)
+            </label>
+            </section>
+ 		 
+	    
+			              <!--建议品牌-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.BrandName) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.BrandName)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--单位-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Unit) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Unit)
+            </label>
+            </section>
+ 		 
+	    
+			  			<!--领用数量-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.Qty)</span> </label>
+            <label class="label">
+            @Html.DisplayFor(model => model.Qty)
+			    </label>
+            </section>
+		 
+	   </div>
+	    
+     <div class="row">
+			  			<!--剩余数量-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.StockQty)</span> </label>
+            <label class="label">
+            @Html.DisplayFor(model => model.StockQty)
+			    </label>
+            </section>
+		 
+	    
+			  			<!--中标价格-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.BidedPrice)</span> </label>
+            <label class="label">
+            @Html.DisplayFor(model => model.BidedPrice)
+			    </label>
+            </section>
+		 
+	   </div>
+	    
+     <div class="row">
+			  			<!--金额-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.Amount)</span> </label>
+            <label class="label">
+            @Html.DisplayFor(model => model.Amount)
+			    </label>
+            </section>
+		 
+	    
+			              <!--中标供应商-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.SupplierName) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.SupplierName)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--参数-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Feature) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Feature)
+            </label>
+            </section>
+ 		 
+	    
+			              <!--备注-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Description) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Description)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			              <!--领用说明-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Remark) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Remark)
+            </label>
+            </section>
+ 		 
+	    
+   </div>
+	    
+</fieldset>
+</form>
+<!-- end outbound form  -->
+</div>
+</div>
+<!-- end master section -->
+<!--========================================================================================-->
+
+

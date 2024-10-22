@@ -1,0 +1,386 @@
+﻿
+@model WebApp.Models.Tender
+
+<script type="text/javascript">
+    //是否开启行内编辑
+    const SUBEDITINLINE = false;
+   //初始化 Tender datagrid
+   var $tenderdg = $('#tender_datagrid');
+   //当前行记录
+   var tender = {};
+   //datagrid CRUD method
+    var tender_editIndex = undefined;
+    //取消
+    function tender_reject() {
+		$tenderdg.datagrid('rejectChanges');
+		tender_editIndex = undefined;
+        $('button[name*=\'tendercancelbutton\']').prop('disabled', true);
+        $('button[name*=\'tenderdeletebutton\']').prop('disabled', true);
+        $('button[name*=\'tendersavebutton\']').prop('disabled', true);
+    }
+    //重新加载数据
+    function tender_reload() {
+			if (tender_endEditing()) {
+				$tenderdg.datagrid('reload');
+			}
+	}
+    //关闭编辑状态
+	function tender_endEditing() {
+			if (tender_editIndex === undefined) {
+                return true; 
+            }
+			if ($tenderdg.datagrid('validateRow', tender_editIndex)) {
+				$tenderdg.datagrid('endEdit', tender_editIndex);
+				tender_editIndex = undefined;
+                return true;
+			} else {
+				const invalidinput = $('input.validatebox-invalid',$tenderdg.datagrid('getPanel'));
+                const fieldnames = invalidinput.map((index, item) => {
+                  return $(item).attr('placeholder') || $(item).attr('id');
+                });
+                $.messager.alert('提示', `${Array.from(fieldnames)} 输入有误.`, 'error');
+				return false;
+			}
+		}
+    //单击列开启编辑功能
+	function tender_onClickCell(index, field) {
+			const _operates = ['_operate1', 'ck'];
+             $('button[name*=\'tenderdeletebutton\']').prop('disabled', false);
+			if (!SUBEDITINLINE || $.inArray(field, _operates) >= 0) {
+				return false;
+			}
+			if (tender_editIndex !== index) {
+				if (tender_endEditing()) {
+					$tenderdg.datagrid('selectRow', index)
+							.datagrid('beginEdit', index);
+                    //tender_editIndex = index;
+					var ed = $tenderdg.datagrid('getEditor', { index: index, field: field });
+					if (ed) {
+						($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+					}
+                    $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+                    $('button[name*=\'tendercancelbutton\']').prop('disabled', false);
+				} else {
+					$tenderdg.datagrid('selectRow', tender_editIndex);
+				}
+			}
+		}
+    //双击弹出编辑当前行对话框
+    function tender_onDblClickRow(index, row) {
+        if (!SUBEDITINLINE) {
+            open_tenderdlg(index, row, 'Modified');
+        }
+    }
+    //订阅对话框新增返回事件
+    $(document).on('tender_form.add', (e, index,item) => {
+        $tenderdg.datagrid("insertRow",
+            {
+                index: 0,
+                row: item
+            });
+        $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+        $('button[name*=\'tendercancelbutton\']').prop('disabled', false);
+    });
+    //订阅对话框修改返回事件
+    $(document).on('tender_form.edit', (e,index, item) => {
+        $tenderdg.datagrid('updateRow', {
+            index: index,
+            row: item
+        });
+        $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+        $('button[name*=\'tendercancelbutton\']').prop('disabled', false);
+    });
+    //新增记录
+    function tender_append() {
+       const $purchaseorderform = $('#purchaseorder_form');
+       if ($purchaseorderform.form('enableValidation').form('validate')) {
+          $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+          $('button[name*=\'tendercancelbutton\']').prop('disabled', false);
+          $('button[name*=\'saveitembutton\']').prop('disabled', false);
+          const purchaseorder = $purchaseorderform.serializeJSON();
+       const item = {
+          
+          PurchaseOrderId:purchaseorder.Id
+        };
+      if (!SUBEDITINLINE) {
+        open_tenderdlg(0, item, 'Added');
+      } else {
+			if (tender_endEditing()) {
+				//对必填字段进行默认值初始化
+				$tenderdg.datagrid('insertRow', 
+                               { index: 0,
+                                  row: item 
+                               });
+				tender_editIndex = 0;
+				$tenderdg.datagrid('selectRow', tender_editIndex)
+						.datagrid('beginEdit', tender_editIndex);
+			}
+        }
+        }
+	 }
+    //删除编辑的行
+	function tender_removeit() {
+		if (tender_editIndex !== undefined) {  
+			$tenderdg.datagrid('cancelEdit', tender_editIndex)
+					           .datagrid('deleteRow', tender_editIndex);
+			tender_editIndex = undefined;
+            $('button[name*=\'tenderdeletebutton\']').prop('disabled', true);
+            $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+        } else {
+           const row = $tenderdg.datagrid('getSelected');
+           if(row){
+             const rowindex = $tenderdg.datagrid('getRowIndex', row);
+             $tenderdg.datagrid('deleteRow', rowindex);
+             $('button[name*=\'tenderdeletebutton\']').prop('disabled', true);
+             $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+           }else{
+             $.messager.alert('提示', '没有选中删除的记录.', 'info');
+           }
+        }
+	}
+    //删除选中的行
+    function tender_deletechecked() {
+            const rows = $tenderdg.datagrid('getChecked');
+            if (rows.length > 0) {
+                var id = rows.filter(item=>item.Id!=null).map(item => {
+                    return item.Id;
+                });
+                $.messager.confirm('确认', `你确定要删除这 <span class='badge bg-color-red'>${id.length}</span> 行记录?`,result => {
+                    if (result) {
+                        $.post('/Tenders/DeleteChecked', { id: id })
+                         .done(response => {
+                            if (response.success) {
+                                $tenderdg.datagrid('reload');
+                            } else {
+                                $.messager.alert('错误', response.err,'error');
+                            }
+                         });
+                    }
+                });  
+            } else {
+                $.messager.alert('提示', '请先选择要删除的记录!','question');
+            }
+      }
+  //获取修改的行
+  function tender_getchanges() {
+    if (tender_endEditing()) {
+      if ($tenderdg.datagrid('getChanges').length > 0) {
+        const inserted = $tenderdg.datagrid('getChanges', 'inserted').map(item => {
+          item.TrackingState = 1;
+          return item;
+        });
+        const deleted = $tenderdg.datagrid('getChanges', 'deleted').map(item => {
+          item.TrackingState = 3;
+          return item;
+        });
+        const updated = $tenderdg.datagrid('getChanges', 'updated').map(item => {
+          item.TrackingState = 2;
+          return item;
+        });
+        //过滤已删除的重复项
+        const changed = inserted.concat(updated.filter(item => {
+          return !deleted.includes(item);
+        })).concat(deleted);
+        return { success: true, changed };
+      } else {
+        return { success: true, changed:undefined};
+      }
+    } else {
+      return { success: false,changed:undefined };
+    }
+  }
+  //提交修改的数据
+  function tender_acceptchanges() {
+    $tenderdg.datagrid('acceptChanges');
+  }
+    //提交保存后台数据库
+	function tender_accept() {
+      return new Promise((resolve, reject) => {
+			if (tender_endEditing()) {
+				if ($tenderdg.datagrid('getChanges').length > 0) {
+					const inserted = $tenderdg.datagrid('getChanges', 'inserted').map(item => {
+                       item.TrackingState = 1;
+                       return item;
+                    });
+					const deleted = $tenderdg.datagrid('getChanges', 'deleted').map(item => {
+                       item.TrackingState = 3;
+                       return item;
+                    });
+					const updated = $tenderdg.datagrid('getChanges', 'updated').map(item => {
+                       item.TrackingState = 2;
+                       return item;
+                    });
+					//过滤已删除的重复项
+                    const changed = inserted.concat(updated.filter(item => {
+                           return !deleted.includes(item);
+                         })).concat(deleted);
+                   //console.table(changed);
+				  if (MODELSTATE === 'Added') {
+                    resolve({ success:true, changed });
+                  } else {
+                    $.post('/Tenders/SaveData', {tenders:changed})
+                     .done(response => {
+                        response.changed = undefined;
+                        resolve(response);
+						//console.log(response);f
+						if (response.success) {
+							toastr.success('保存成功'); 
+							$tenderdg.datagrid('acceptChanges');
+							$tenderdg.datagrid('reload');
+                             $('button[name*=\'tendercancelbutton\']').prop('disabled', true);
+                             $('button[name*=\'tenderdeletebutton\']').prop('disabled', true);
+                             $('button[name*=\'tendersavebutton\']').prop('disabled', true);
+						} else {
+                           $.messager.alert('错误', response.err ,'error');
+                        }
+					  })
+                      .fail((jqXHR, textStatus, errorThrown) => {
+						//console.log(errorThrown);
+                        resolve({ success: false, err: errorThrown });
+						$.messager.alert('异常', errorThrown,'error');
+					  });
+                   }
+				} else {
+                  resolve({ success: true, changed: undefined});
+                }
+			} else {
+               resolve({ success: false });
+            }
+		});
+      }
+
+
+$(() => {
+    $tenderdg.datagrid({
+            rownumbers: true,
+            iconCls: 'fa fa-list',
+            idField: 'Id',
+            sortName: 'Id',
+            sortOrder: 'asc',
+            remoteFilter: true,
+            singleSelect: true,
+            checkOnSelect: false,
+		    selectOnCheck: false,
+            method: 'get',
+            pageList: [10, 20, 50, 100],
+            onDblClickRow: tender_onDblClickRow,
+            onClickCell: tender_onClickCell,
+            onSelect: function(index,row) {
+              tender = row;
+            },
+            onLoadSuccess: function (data) {
+              tender_editIndex = undefined;
+            },
+            onBeginEdit: function (index, row) {
+               //const editors = $(this).datagrid('getEditors', index);
+				        const supplierid = $(this).datagrid('getEditor', { index: index, field: 'SupplierId' });
+				        $(supplierid.target).combobox('options')
+                             .onSelect = (item) => {
+                               row['SupplierId'] = item.Id;
+                               row['SupplierName'] = item.Name;
+                             };	
+                        $(supplierid.target).combobox('textbox')
+                             .bind('keydown', (e)=> {
+                               if (e.keyCode === 13) {
+                                 $(e.target).emulateTab();
+                               }
+                         });
+  
+            },
+            onEndEdit: function (index, row) {
+
+             },
+             onBeforeEdit: function (index, row) {
+                 tender_editIndex = index;
+                 row.editing = true;
+                 $(this).datagrid('refreshRow', index);
+                 $('button[name*=\'tenderdeletebutton\']').prop('disabled', false);
+                 $('button[name*=\'tendersavebutton\']').prop('disabled', false);
+                 $('button[name*=\'tendercancelbutton\']').prop('disabled', false);
+             },
+             onAfterEdit: function (index, row) {
+                   row.editing = false;
+                   tender_editIndex = undefined;
+                   $(this).datagrid('refreshRow', index);
+             },
+             onCancelEdit: function (index, row) {
+                tender_editIndex = undefined;
+                row.editing = false;
+                $(this).datagrid('refreshRow', index);
+               $('button[name*=\'tenderdeletebutton\']').prop('disabled', true);
+               $('button[name*=\'tendersavebutton\']').prop('disabled', true);
+               $('button[name*=\'tendercancelbutton\']').prop('disabled', true);
+            },
+            pagination: true,
+            striped: true,
+            columns: [[
+		      {field:'Id',title:'<span class="required">@Html.DisplayNameFor(model => model.Id)</span>', width:100 ,sortable:true,resizable:true, hidden:true},
+			{    /*询价单号*/
+                 field:'DocNo', 
+                 title:'@Html.DisplayNameFor(model => model.DocNo)', 
+                 width:120,
+                 editor:{
+                          type:'textbox',
+                          options:{ prompt:'@Html.DisplayNameFor(model => model.DocNo)',required:false, validType: 'length[0,0]' }  
+                       },
+                 sortable:true,
+                 hidden:false,
+                 resizable:true 
+			},
+			{   /*供应商ID*/
+                field:'SupplierId',
+                title:'<span class="required">@Html.DisplayNameFor(model => model.SupplierId)</span>',
+                width:160, 
+                sortable:true, 
+                resizable:true,
+                hidden:false,
+                formatter:function(value,row) {
+				        return row.SupplierName;
+					},
+			    editor:{
+					    type:'combobox',
+					    options:{
+								prompt:'@Html.DisplayNameFor(model => model.SupplierId)' ,
+                                mode: 'remote',
+                                editable: false,
+								valueField:'Id',
+								textField:'Name',
+								method:'get',
+								url:'/PurchaseOrders/GetCompanies',
+								required:true
+							}
+						}
+			},
+            ]]
+            });
+            //初始化 datagrid filter
+            $tenderdg.datagrid('enableFilter',[
+		   {
+				 field: 'SupplierId',
+				 type:'combobox',
+				 options:{
+								valueField:'Id',
+								textField:'Name',
+								method:'get',
+								url:'/PurchaseOrders/GetCompanies',
+								onChange: function (value) {
+								if (value == '') {
+									$tenderdg.datagrid('removeFilterRule', 'SupplierId');
+								} else {
+									$tenderdg.datagrid('addFilterRule', {
+										field: 'SupplierId',
+										op: 'equal',
+										value: value
+								});
+							}
+							$tenderdg.datagrid('doFilter');
+						}
+					}
+		   },
+		   ]);
+  });
+      
+</script>
+
+
+ 

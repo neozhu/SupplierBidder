@@ -1,0 +1,475 @@
+﻿@model WebApp.Models.PurchaseOrder
+@{
+  ViewBag.Title = "结案";
+}
+<!-- MAIN CONTENT -->
+<div id="content">
+
+  <!-- end quick navigation bar -->
+  <!-- widget grid -->
+  <section id="widget-grid" class="">
+    <!-- row -->
+    <div class="row">
+      <!-- NEW WIDGET START -->
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
+          <!-- widget options:
+          usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+          data-widget-colorbutton="false"
+          data-widget-editbutton="false"
+          data-widget-togglebutton="false"
+          data-widget-deletebutton="false"
+          data-widget-fullscreenbutton="false"
+          data-widget-custombutton="false"
+          data-widget-collapsed="true"
+          data-widget-sortable="false"
+          -->
+          <header>
+            <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+            <h2>结案</h2>
+          </header>
+
+          <!-- widget div-->
+          <div>
+            <!-- widget edit box -->
+            <div class="jarviswidget-editbox">
+              <!-- This area used as dropdown edit box -->
+            </div>
+            <!-- end widget edit box -->
+            <!-- widget content -->
+            <div class="widget-body no-padding">
+              <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+              </div>
+              <div class="widget-body-toolbar">
+                <div class="row">
+                  <div class="col-sm-8  ">
+                    <div class="btn-group btn-group-sm">
+                      <button name="closebutton" onclick="closed()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="结案确认"> <i class="fa fa-check-square-o"></i> 结案确认 </button>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                      <button onclick="reload()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="@Html.L("Refresh")"> <i class="fa fa-refresh"></i> @Html.L("Refresh") </button>
+                    </div>
+
+                    <div class="btn-group btn-group-sm">
+                      <button onclick="exportexcel()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="导出Excel"> <i class="fa fa-file-excel-o"></i> 导出Excel </button>
+                    </div>
+
+
+                  </div>
+                  <div class="col-sm-4 text-align-right visible-lg-inline-block">
+                    <div class="btn-group btn-group-sm">
+                      <button onclick="window.history.back()" class="btn btn-sm btn-success" data-rel="tooltip" data-placement="bottom" title="@Html.L("GoBack")"> <i class="fa fa-chevron-left"></i> @Html.L("GoBack") </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="alert alert-warning no-margin fade in">
+                <button class="close" data-dismiss="alert">
+                  ×
+                </button>
+                <i class="fa-fw fa fa-info"></i>
+                注意事项:
+              </div>
+              <!--begin datagrid-content -->
+              <div class="table-responsive">
+                <table id="shippingorders_datagrid">
+                </table>
+              </div>
+              <!--end datagrid-content -->
+            </div>
+            <!-- end widget content -->
+          </div>
+          <!-- end widget div -->
+        </div>
+        <!-- end widget -->
+      </article>
+      <!-- WIDGET END -->
+    </div>
+    <!-- end row -->
+  </section>
+  <!-- end widget grid -->
+  <!-- detail popup window -->
+  @{ Html.RenderPartial("_PopupCloseFormView", new WebApp.Models.PurchaseOrder()); }
+  <!-- end detail popup window -->
+
+</div>
+<!-- END MAIN CONTENT -->
+<style>
+  .progressbarjs {
+    margin-bottom: 10px;
+    width: 100%;
+    height: 4px;
+  }
+</style>
+@section Scripts {
+ 
+  <script src="@Fingerprint.Tag("/Scripts/smartadmin.easyui.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/plugins/columns-reset.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.easyui.component.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.extend.formatter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/locale/easyui-lang-zh_CN.js")"></script>
+  <script src="~/Scripts/plugin/progressbar/progressbar.min.js"></script>
+  <script type="text/javascript">
+      //是否强制从后台取值
+      const REQUIRBACKEND = false;
+      //是否开启行内编辑
+      const EDITINLINE = false;
+    var shippingorder = {};
+
+    //执行导出下载Excel
+    function exportexcel() {
+      const filterRules = JSON.stringify($dg.datagrid('options').filterRules);
+      //console.log(filterRules);
+      $.messager.progress({ title: '正在执行导出!' });
+      let formData = new FormData();
+      formData.append('filterRules', filterRules);
+      formData.append('sort', 'Id');
+      formData.append('order', 'asc');
+      $.postDownload('/PurchaseOrders/ExportExcel', formData).then(res => {
+        $.messager.progress('close');
+        toastr.success('导出成功!');
+      }).catch(err => {
+        //console.log(err);
+        $.messager.progress('close');
+        $.messager.alert('导出失败', err.statusText, 'error');
+      });
+
+    }
+  function closed () {
+    const selected = $dg.datagrid('getChecked').filter(item => {
+      return item.Status == '结案中'
+    });
+    if (selected.length > 0) {
+      openclosewindow(selected)
+    } else {
+      $.messager.alert('提示', '请先选择要【结案中】的记录!', 'question');
+    }
+  }
+
+
+
+    function reload() {
+      $dg.datagrid('unselectAll');
+      $dg.datagrid('uncheckAll');
+      $dg.datagrid('reload');
+    }
+    //初始化定义datagrid
+    var $dg = $('#shippingorders_datagrid');
+  $(() => {
+    //定义datagrid结构
+   $dg.datagrid({
+      rownumbers: true,
+      checkOnSelect: false,
+      selectOnCheck: false,
+      idField: 'Id',
+      sortName: 'Id',
+      sortOrder: 'desc',
+      remoteFilter: true,
+      singleSelect: false,
+      method: 'get',
+      clientPaging: false,
+      pagination: true,
+     striped: true,
+     filterRules: [{
+       field: 'Status',
+       op: 'equal',
+       value: '结案中'
+     }],
+      pageList: [10, 20, 50, 100, 500],
+      onBeforeLoad: function () {
+        //datagrid resize when jarvisWidgets resized.
+        const that = $(this);
+        $(window).on("resize.jarvisWidgets", () => {
+          that.datagrid('resize');
+        })
+      },
+      onLoadSuccess: function (data) {
+        editIndex = undefined;
+        $('[data-toggle="tooltip"]').tooltip();
+      },
+      onCheck: function () {
+        $("button[name*='closebutton']").prop('disabled', false);
+      },
+      onUncheck: function () {
+        const checked = $(this).datagrid('getChecked').length > 0;
+        $("button[name*='closebutton']").prop('disabled', !checked);
+      },
+
+      frozenColumns: [[
+        /*开启CheckBox选择功能*/
+        { field: 'ck', checkbox: true },
+      ]],
+     columns: [[
+       {    /*状态*/
+          field: 'Status',
+          title: '@Html.DisplayNameFor(model => model.Status)',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: statusformatter
+        },
+        {    /*采购单号*/
+         field: 'ReceivedDate',
+          title: '入库时间',
+          width: 120,
+          hidden: false,
+          sortable: true,
+         resizable: true,
+         formatter: dateformatter
+       },
+       {    /*品名*/
+          field: 'ProductName',
+          title: '@Html.DisplayNameFor(model => model.ProductName)',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+       },
+        {    /*规格*/
+          field: 'Spec',
+          title: '@Html.DisplayNameFor(model => model.Spec)',
+          width: 150,
+          hidden: false,
+          sortable: true,
+          resizable: true
+       },
+       {    /*供应商*/
+         field: 'SupplierName',
+         title: '供应商',
+         width: 200,
+         hidden: false,
+         sortable: true,
+         resizable: true
+       },
+        {    /*单位*/
+          field: 'Unit',
+          title: '@Html.DisplayNameFor(model => model.Unit)',
+          width: 60,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'Qty',
+          title: '@Html.DisplayNameFor(model => model.Qty)',
+          width: 110,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'ReceiptQty',
+          title: '@Html.DisplayNameFor(model => model.ReceiptQty)',
+          width: 110,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+       },
+       {    /*数量*/
+         field: 'BidedPrice',
+         title: '单价',
+         width: 110,
+         align: 'right',
+         hidden: false,
+         formatter: numberformatter,
+         sortable: true,
+         resizable: true
+       },
+       {    /*数量*/
+         field: 'Amount',
+         title: '总价',
+         width: 110,
+         align: 'right',
+         hidden: false,
+         formatter: function (v, r) {
+           return numeral(r.BidedPrice * r.ReceiptQty).format('0,0.00');
+         },
+         sortable: true,
+         resizable: true
+       },
+       {    /*采购单号*/
+         field: 'InvoiceAmount',
+          title: '@Html.DisplayNameFor(model => model.InvoiceAmount)',
+          width: 120,
+          hidden: false,
+         sortable: true,
+         formatter: numberformatter,
+          resizable: true
+       },
+       {    /*采购单号*/
+         field: 'InvoiceNo',
+          title: '@Html.DisplayNameFor(model => model.InvoiceNo)',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*采购单号*/
+          field: 'PO',
+          title: '@Html.DisplayNameFor(model => model.PO)',
+          width: 120,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+        {    /*出货单号*/
+          field: 'SO',
+          title: '@Html.DisplayNameFor(model => model.SO)',
+          width: 120,
+          hidden: false,
+
+          sortable: true,
+          resizable: true
+        },
+
+
+        {   /*下单日期*/
+          field: 'PODate',
+          title: '<span class="required">@Html.DisplayNameFor(model => model.PODate)</span>',
+          width: 100,
+          align: 'right',
+          hidden: false,
+          formatter: dateformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*数量*/
+          field: 'OpenQty',
+          title: '@Html.DisplayNameFor(model => model.OpenQty)',
+          width: 110,
+          align: 'right',
+          hidden: false,
+          formatter: numberformatter,
+          sortable: true,
+          resizable: true
+        },
+        {    /*科研号*/
+          field: 'GrantNo',
+          title: '@Html.DisplayNameFor(model => model.GrantNo)',
+          width: 120,
+          sortable: true,
+          resizable: true
+        },
+        {    /*申请部门*/
+          field: 'Dept',
+          title: '@Html.DisplayNameFor(model => model.Dept)',
+          width: 130,
+          sortable: true,
+          resizable: true
+        },
+        {    /*申请科室*/
+          field: 'Section',
+          title: '@Html.DisplayNameFor(model => model.Section)',
+          width: 130,
+          sortable: true,
+          resizable: true
+        },
+        {    /*备注*/
+          field: 'Description',
+          title: '@Html.DisplayNameFor(model => model.Description)',
+          width: 200,
+          hidden: false,
+          sortable: true,
+          resizable: true
+        },
+      ]]
+    })
+    .datagrid('enableFilter', [
+      /*需要在键值队维护好status枚举值*/
+      {  /*状态*/
+        field: 'Status',
+        type: 'closestatusfilter',
+        options: {
+
+        }
+      },
+      {     /*下单日期*/
+        field: 'PODate',
+        type: 'dateRange',
+        options: {
+        }
+      },
+      {     /*下单日期*/
+        field: 'ReceivedDate',
+        type: 'dateRange',
+        options: {
+        }
+      },
+      {  /*类别*/
+        field: 'Category',
+        type: 'combobox',
+        options: {
+          url: '/Categories/GetComboData',
+          textField: 'Name',
+          valueField: 'Name',
+          editable: true,
+          method: 'get',
+          panelHeight: 'auto',
+          onChange: function (value) {
+            if (value && value.length > 0) {
+              $dg.datagrid('addFilterRule', {
+                field: 'Category',
+                op: 'equal',
+                value: value
+              });
+            } else {
+              $dg.datagrid('removeFilterRule', 'Category');
+
+            }
+            $dg.datagrid('doFilter');
+          }
+        }
+      },
+    ])
+     .datagrid('load', '/PurchaseOrders/GetCloseData');
+  });
+
+  </script>
+
+  <script>
+    $(() => {
+      $('#closeform').validate({
+        errorClass: 'invalid',
+        errorElement: 'em',
+        highlight: function (element) {
+          $(element).parent().removeClass('state-success').addClass("state-error");
+          $(element).removeClass('valid');
+        },
+        unhighlight: function (element) {
+          $(element).parent().removeClass("state-error").addClass('state-success');
+          $(element).addClass('valid');
+        },
+        rules: {
+          InvoiceNo: { required: true },
+          InvoiceAmount: { required: true },
+        },
+        messages: {
+          InvoiceNo: {
+            required: '发票号必填'
+          },
+          InvoiceAmount: {
+            required: '发票金额必填'
+          },
+        },
+        errorPlacement: function (error, element) {
+          error.insertAfter(element.parent());
+        }
+      });
+
+    })
+  </script>
+
+}
+
+

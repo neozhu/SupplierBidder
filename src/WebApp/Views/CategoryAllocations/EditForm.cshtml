@@ -1,0 +1,73 @@
+﻿﻿@model WebApp.Models.CategoryAllocation
+<!-- begin master section -->
+<div  class="main-form">
+<!--begin categoryallocation form  -->
+<form id="categoryallocation_form" method="post" novalidate="novalidate" >
+@Html.AntiForgeryToken()
+   @Html.HiddenFor(x=>x.Id)
+ <fieldset>
+ <div class="form-group form-group-sm">
+      <div class="row">
+
+     
+       <!--采购类别-->
+       <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label"><span class="required">@Html.DisplayNameFor(model => model.CategoryId)</span> </label>
+   	        @Html.DropDownListFor(model => model.CategoryId, ViewBag.CategoryId as List<SelectListItem>, htmlAttributes: new { @class = "form-control" }) 
+       </div>
+
+        <!--采购类别-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label"><span class="required">@Html.DisplayNameFor(model => model.CategoryName)</span> </label>
+			@Html.EditorFor(x => x.CategoryName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.CategoryName) } })
+      
+         </div>
+
+     
+       <!--合格供应商-->
+       <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label"><span class="required">@Html.DisplayNameFor(model => model.CompanyId)</span> </label>
+   	        @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyId as List<SelectListItem>, htmlAttributes: new { @class = "form-control" }) 
+       </div>
+
+        <!--厂商名称-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label">@Html.DisplayNameFor(model => model.CompanyName) </label>
+			@Html.EditorFor(x => x.CompanyName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.CompanyName) } })
+      
+         </div>
+
+        <!--备注-->
+        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <label class="control-label">@Html.DisplayNameFor(model => model.Remark) </label>
+			@Html.EditorFor(x => x.Remark, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.Remark) } })
+      
+         </div>
+
+		
+      <!--是否禁止-->
+      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+              <label class="control-label"><span class="required">@Html.DisplayNameFor(model => model.IsDisabled)</span> </label>
+              <div class="checkbox  no-margin">
+              <label>
+                 <input id="@Html.IdFor(model => model.IsDisabled)"
+                       name="@Html.NameFor(model => model.IsDisabled)"
+                       value="true" @(Model.IsDisabled ? "checked=\"checked\"" : "")
+                       class="checkbox style-0"
+                       tabindex="6"
+                       type="checkbox" />
+                <span>@Html.DisplayNameFor(model => model.IsDisabled)</span>
+              </label>
+            </div>
+      </div>
+	   </div>
+    </div>
+	    
+</fieldset>
+</form>
+<!-- end categoryallocation form  -->
+</div>
+
+<!-- end master section -->
+<!--========================================================================================-->
+

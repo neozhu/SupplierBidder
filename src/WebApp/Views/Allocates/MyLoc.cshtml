@@ -1,0 +1,277 @@
+﻿@model WebApp.Models.Allocate
+@{
+    ViewBag.Title = "二级库存查询";
+}
+<!-- MAIN CONTENT -->
+<div id="content">
+
+    <!-- end quick navigation bar -->
+    <!-- widget grid -->
+    <section id="widget-grid" class="">
+        <!-- row -->
+        <div class="row">
+            <!-- NEW WIDGET START -->
+            <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
+                <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
+                    <!-- widget options:
+                    usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+                    data-widget-colorbutton="false"
+                    data-widget-editbutton="false"
+                    data-widget-togglebutton="false"
+                    data-widget-deletebutton="false"
+                    data-widget-fullscreenbutton="false"
+                    data-widget-custombutton="false"
+                    data-widget-collapsed="true"
+                    data-widget-sortable="false"
+                    -->
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                        <h2>二级库存查询</h2>
+                    </header>
+
+                     <!-- widget div-->
+                    <div>
+                        <!-- widget edit box -->
+                        <div class="jarviswidget-editbox">
+                            <!-- This area used as dropdown edit box -->
+                        </div>
+                        <!-- end widget edit box -->
+                        <!-- widget content -->
+                        <div class="widget-body no-padding">
+                            <div class="sk-spinner sk-spinner-wave">
+                              <div class="sk-rect1"></div>
+                              <div class="sk-rect2"></div>
+                              <div class="sk-rect3"></div>
+                              <div class="sk-rect4"></div>
+                              <div class="sk-rect5"></div>
+                            </div>
+                            <div class="widget-body-toolbar">
+                                <div class="row">
+                                  <div class="col-sm-8  ">
+                                    <!-- 开启授权控制请参考 @@if (Html.IsAuthorize("Create") -->
+                                    <div class="btn-group btn-group-sm">
+                                      <button onclick="reload()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="@Html.L("Refresh")"> <i class="fa fa-refresh"></i> @Html.L("Refresh") </button>
+                                    </div>
+                                    <div class="btn-group btn-group-sm">
+                                      <button onclick="exportexcel()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="@Html.L("Export")"> <i class="fa fa-file-excel-o"></i> @Html.L("Export") </button>
+                                    </div>
+                                  </div>
+                                    <div class="col-sm-4 text-align-right visible-lg-inline-block">
+                                        <div class="btn-group btn-group-sm">
+                                            <button onclick="window.history.back()" class="btn btn-sm btn-success" data-rel="tooltip" data-placement="bottom" title="@Html.L("GoBack")"> <i class="fa fa-chevron-left"></i> @Html.L("GoBack") </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--begin datagrid-content -->
+                            <div class="table-responsive">
+                                 <table id="allocates_datagrid">  
+                                 </table>
+                            </div>
+                            <!--end datagrid-content -->
+                         </div>
+                        <!-- end widget content -->
+                    </div>
+                    <!-- end widget div -->
+                </div>
+                <!-- end widget -->
+            </article>
+            <!-- WIDGET END -->
+        </div>
+        <!-- end row -->
+    </section>
+    <!-- end widget grid -->
+    <!-- file upload partial view -->
+    <!-- RenderPartial() does exactly the same thing and is better for performance over Partial() -->
+ 
+    <!-- end file upload partial view -->
+
+            
+</div>
+<!-- END MAIN CONTENT -->
+
+@section styles{
+  <link rel="stylesheet" href="@Fingerprint.Tag("/scripts/easyui/themes/insdep/easyui.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/easyui/themes/insdep/icon.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/toastr/toastr.min.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/daterangepicker/daterangepicker.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/font/font-fileuploader.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/jquery.fileuploader.min.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/jquery.fileuploader-theme-dragdrop.css")" />
+}
+@section Scripts {
+  <script src="@Fingerprint.Tag("/Scripts/plugin/daterangepicker/daterangepicker.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/jquery.easyui.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/plugins/datagrid-filter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.easyui.component.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.extend.formatter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/locale/easyui-lang-zh_CN.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/jquery.fileuploader.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/plugin/filesaver/FileSaver.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/plugin/filesaver/jquery.fileDownload.js")"></script>
+  <script type="text/javascript">
+
+       //重新加载数据
+       function reload() {
+            $dg.datagrid('unselectAll');
+            $dg.datagrid('uncheckAll');
+            $dg.datagrid('reload');
+       }
+
+
+    function exportexcel() {
+      const filterRules = JSON.stringify($dg.datagrid('options').filterRules);
+      //console.log(filterRules);
+      $.messager.progress({ title: '正在执行导出!' });
+      let formData = new FormData();
+      formData.append('filterRules', filterRules);
+      formData.append('sort', 'Id');
+      formData.append('order', 'asc');
+      $.postDownload('/Allocates/ExportLoc', formData).then(res => {
+        $.messager.progress('close');
+        toastr.success('导出成功!');
+      }).catch(err => {
+        //console.log(err);
+        $.messager.progress('close');
+        $.messager.alert('导出失败', err.statusText, 'error');
+      });
+
+    }
+
+
+    //初始化定义datagrid
+    var $dg = $('#allocates_datagrid');
+    $(() => {
+      //定义datagrid结构
+      $dg.datagrid({
+        rownumbers: true,
+        checkOnSelect: false,
+        selectOnCheck: false,
+        idField: 'Id',
+        sortName: 'Id',
+        sortOrder: 'desc',
+        remoteFilter: true,
+        singleSelect: true,
+        //url: '/Allocates/GetData',
+        method: 'get',
+        pagination: true,
+        clientPaging: false,
+        striped: true,
+        pageList: [10, 20, 50, 100, 500, 2000],
+        filterRules: [],
+       onBeforeLoad: function () {
+          //datagrid resize when jarvisWidgets resized.
+          const that = $(this);
+          $(window).on("resize.jarvisWidgets", () => {
+            that.datagrid('resize');
+          })
+        },
+        columns: [[
+          {    /*中标供应商*/
+            field: 'Loc',
+            title: '仓库名',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+       {    /*状态*/
+            field: 'ProductCode',
+            title: '商品编码',
+         width: 130,
+         sortable: true,
+         resizable: true,
+            hidden: false,
+          },
+          {    /*状态*/
+            field: 'ProductName',
+            title: '品名',
+            width: 160,
+            sortable: true,
+            resizable: true,
+            hidden: false,
+          },
+
+          {    /*采购单号*/
+            field: 'CasNO',
+            title: 'Cas NO',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+          {    /*Volume*/
+            field: 'Volume',
+            title: '体积',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+          {    /*单位*/
+            field: 'Unit',
+            title: '单位',
+            width: 80,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+          {    /*规格*/
+            field: 'Purity',
+            title: '浓度',
+            width: 120,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+         
+          {    /*领用数量*/
+            field: 'Qty',
+            title: '库存数量',
+            width: 110,
+            align: 'right',
+            hidden: false,
+            formatter: numberformatter,
+            sortable: true,
+            resizable: true
+          },
+
+          {    /*中标供应商*/
+            field: 'SupplierName',
+            title: '供应商',
+            width: 200,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+          {    /*中标供应商*/
+            field: 'CustomerName',
+            title: '厂商',
+            width: 200,
+            hidden: false,
+            sortable: true,
+            resizable: true
+          },
+
+
+         
+
+        ]]
+      })
+        .datagrid('enableFilter', [
+
+
+
+        ])
+        .datagrid('load', '/Allocates/GetLocData');
+    });
+
+  </script>
+
+
+
+}
+
+ 

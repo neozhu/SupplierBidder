@@ -1,0 +1,52 @@
+﻿﻿@model WebApp.Models.Tender
+<!-- begin master section -->
+<div class="row">
+    <div class="col col-lg-12 col-md-12">
+<!--begin tender form  -->
+<form id="tender_form" class="smart-form" method="post" novalidate >
+@Html.AntiForgeryToken()
+  <input type="hidden" id="@Html.IdFor(model => model.Id)" 
+                       name="@Html.NameFor(model => model.Id)" 
+                       value="@Html.ValueFor(model => model.Id)" />
+ <fieldset>
+     <div class="row">
+			              <!--询价单号-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.DocNo) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.DocNo)
+            </label>
+            </section>
+ 		 
+	    
+            <!--采购单ID-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.PurchaseOrderId)</span> </label>
+            <label class="label">
+			      @Html.DisplayFor(model => model.PurchaseOrderId)
+			</label>
+            </section>
+			 
+	   </div>
+	    
+     <div class="row">
+            <!--供应商ID-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.SupplierId)</span> </label>
+            <label class="label">
+			      @Html.DisplayFor(model => model.SupplierId)
+			</label>
+            </section>
+			 
+	    
+   </div>
+	    
+</fieldset>
+</form>
+<!-- end tender form  -->
+</div>
+</div>
+<!-- end master section -->
+<!--========================================================================================-->
+
+

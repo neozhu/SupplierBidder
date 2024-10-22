@@ -1,0 +1,52 @@
+﻿﻿@model WebApp.Models.Category
+<!-- begin master section -->
+<div class="row">
+    <div class="col col-lg-12 col-md-12">
+<!--begin category form  -->
+<form id="category_form" class="smart-form" method="post" novalidate >
+@Html.AntiForgeryToken()
+  <input type="hidden" id="@Html.IdFor(model => model.Id)" 
+                       name="@Html.NameFor(model => model.Id)" 
+                       value="@Html.ValueFor(model => model.Id)" />
+ <fieldset>
+     <div class="row">
+			              <!--采购单类别-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.Name)</span> </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Name)
+            </label>
+            </section>
+ 		 
+	    
+			              <!--备注-->
+            <section class="col col-6">
+            <label class="label">@Html.DisplayNameFor(model => model.Remark) </label>
+            <label class="label">
+			 @Html.DisplayFor(model => model.Remark)
+            </label>
+            </section>
+ 		 
+	   </div>
+	    
+     <div class="row">
+			  			<!--合格供应商数-->
+            <section class="col col-6">
+            <label class="label"><span class="required">@Html.DisplayNameFor(model => model.AllowSuppliers)</span> </label>
+            <label class="label">
+            @Html.DisplayFor(model => model.AllowSuppliers)
+			    </label>
+            </section>
+		 
+	    
+   </div>
+	    
+</fieldset>
+</form>
+<!-- end category form  -->
+</div>
+</div>
+<!-- end master section -->
+<!--========================================================================================-->
+
+

@@ -1,0 +1,124 @@
+﻿
+
+@model WebApp.Models.Tender
+<div id="tenderdlg" hidden="hidden" class="easyui-dialog"
+     title="Tender" style="padding:15px"
+     data-options="
+                iconCls: 'icon-more',
+                modal:true,
+                closed:true,
+                cache: false,
+                resizable:true,
+                width:760,
+                height:420,
+                /*toolbar: [], 注解*/
+                onOpen:function(){
+                   $('#tender_form').form('disableValidation');
+                },
+                buttons: [{
+                    text:'确认',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        confirm_tenderform();
+                    }
+                },{
+                    text:'取消',
+                    handler:function(){
+                        $('#tenderdlg').dialog('close');
+                    }
+                }]
+            ">
+ <div class="widget-body">
+    <form id="tender_form" class="bv-form" novalidate="novalidate">
+        <fieldset>
+          <div class="form-group">
+            <div class="row">
+    <!--Id-->
+	@Html.HiddenFor(model => model.Id)		
+             
+    <!--询价单号-->
+    <div class="col-sm-12 col-md-4">
+        <label class="control-label">@Html.DisplayNameFor(model => model.DocNo)</label>
+		<input id="@Html.IdFor(model => model.DocNo)" 
+							name="@Html.NameFor(model => model.DocNo)" 
+							value="@Html.ValueFor(model => model.DocNo)"
+							tabindex="1" 
+			     			class="easyui-textbox" 
+							type="text" 
+                            style="width:100%"
+							data-options="prompt:'@Html.DisplayNameFor(model => model.DocNo)',
+     						 required:false ,validType:'length[0,20]'" />
+    </div>
+             
+      <!--采购单ID-->
+      <input type="hidden" id="PurchaseOrderPO" name="PurchaseOrderPO" value="">
+	  <input id="@Html.IdFor(model => model.PurchaseOrderId)"
+			       name="@Html.NameFor(model => model.PurchaseOrderId)"
+				   value="@Html.ValueFor(model => model.PurchaseOrderId)"
+                   type="hidden" />
+             
+       <!--供应商ID-->
+       <div class="col-sm-12 col-md-4">
+            <input type="hidden" id="CompanyName" name="CompanyName" value="">
+			<label class="control-label"><span class="required">@Html.DisplayNameFor(model => model.SupplierId)</span></label>
+            <input id="@Html.IdFor(model => model.SupplierId)"
+			       name="@Html.NameFor(model => model.SupplierId)"
+				   value="@Html.ValueFor(model => model.SupplierId)"
+                   style="width:100%"
+                   tabindex="3"
+				   class="easyui-combobox" 
+                   data-options="
+						prompt:'@Html.DisplayNameFor(model => model.SupplierId)' ,
+						valueField: 'Id',
+						textField: 'Name' ,
+                        required:true,
+                        validateOnCreate:false,
+                        validateOnBlur:true,
+                        validType:'combocheck[\'#SupplierId\',\'请选择供应商ID\']',
+						url: '/PurchaseOrders/GetCompanies' ,
+						onSelect: function(item){
+                            $('#CompanyName').val(item.Name);
+				        }
+                        ">
+    </div>
+             
+  
+           </div>
+         </div>
+       </fieldset>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+     var form_state = 'Added';
+     var current_index = -1;
+     var tender = {};
+ 
+     function open_tenderdlg(index, row, state) {
+         form_state = state;
+         current_index = index;
+         tender = row;
+         $('#tenderdlg').dialog('open');
+         if (form_state === 'Added') {
+             $('#tenderdlg').dialog('setTitle', '新增明细');
+         } else {
+             $('#tenderdlg').dialog('setTitle', '修改明细');
+         }
+         $('#tender_form').form('reset');
+         $('#tender_form').form('load', tender);
+     }
+     function confirm_tenderform() {
+         $tenderform = $('#tender_form');
+         if ($tenderform.form('enableValidation').form('validate')) {
+             tender = $tenderform.serializeJSON();
+             if (form_state === 'Added') {
+                 $(document).trigger('tender_form.add', [current_index, tender])
+             } else {
+                 $(document).trigger('tender_form.edit', [current_index, tender])
+             }
+             $('#tenderdlg').dialog('close');
+         }
+     }
+ </script>
+
+ 

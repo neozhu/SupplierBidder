@@ -1,0 +1,102 @@
+2020-03-07 21:33:46.0591|FATAL|WebApp.MvcApplication|A public action method 'GetDockNo' was not found on controller 'WebApp.Controllers.PurchaseOrdersController'.
+2020-03-07 21:34:14.3078|FATAL|WebApp.MvcApplication|A public action method 'GetDockNo' was not found on controller 'WebApp.Controllers.PurchaseOrdersController'.
+2020-03-07 21:35:08.4549|FATAL|WebApp.MvcApplication|A public action method 'GetDockNo' was not found on controller 'WebApp.Controllers.PurchaseOrdersController'.
+2020-03-07 21:36:11.1357|FATAL|WebApp.MvcApplication|A public action method 'DoBidding' was not found on controller 'WebApp.Controllers.PurchaseOrdersController'.
+2020-03-07 21:55:03.5073|FATAL|WebApp.MvcApplication|Could not load type 'WebApp.Models.ViewModel.BidingViewModel' from assembly 'WebApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'.
+2020-03-08 09:06:31.8818|FATAL|WebApp.MvcApplication|Exception of type 'Unity.Exceptions.InvalidRegistrationException' was thrown.
+2020-03-08 09:08:10.5193|FATAL|WebApp.MvcApplication|Exception of type 'Unity.Exceptions.InvalidRegistrationException' was thrown.
+2020-03-08 09:09:33.1117|FATAL|WebApp.MvcApplication|Exception of type 'Unity.Exceptions.InvalidRegistrationException' was thrown.
+2020-03-08 10:02:56.8635|FATAL|WebApp.MvcApplication|The model item passed into the dictionary is of type 'WebApp.Models.PurchaseOrder', but this dictionary requires a model item of type 'WebApp.Models.ViewModel.BidViewModel'.
+2020-03-11 10:54:29.7607|FATAL|WebApp.MvcApplication|The model item passed into the dictionary is of type 'WebApp.Models.Bidding', but this dictionary requires a model item of type 'WebApp.Models.ShippingOrder'.
+2020-03-11 10:55:36.0836|FATAL|WebApp.MvcApplication|The model item passed into the dictionary is of type 'WebApp.Models.Bidding', but this dictionary requires a model item of type 'WebApp.Models.ShippingOrder'.
+2020-03-11 16:43:17.0839|FATAL|WebApp.MvcApplication|Encountered end tag "div" with no matching start tag.  Are your start/end tags properly balanced?
+
+2020-03-14 12:33:21.0076|FATAL|WebApp.MvcApplication|d:\projects\enquiry\src\Inquirysystem.Solution\WebApp\Views\Home\Index.cshtml(295): error CS1012: Too many characters in character literal
+2020-03-14 12:34:21.1490|FATAL|WebApp.MvcApplication|d:\projects\enquiry\src\Inquirysystem.Solution\WebApp\Views\Home\Index.cshtml(295): error CS1012: Too many characters in character literal
+2020-03-15 10:14:04.1798|FATAL|WebApp.MvcApplication|Object reference not set to an instance of an object.
+2020-03-15 10:18:38.4240|FATAL|WebApp.MvcApplication|Object reference not set to an instance of an object.
+2020-03-23 19:05:46.6390|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Column ' ??' does not belong to table ??????.
+2020-03-23 19:06:48.5172|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Column ' ??' does not belong to table ??????.
+2020-03-23 19:07:37.1764|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Column ' ??' does not belong to table ??????.
+2020-03-23 19:10:26.4447|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Column ' ??' does not belong to table ??????.
+2020-03-23 19:11:26.2086|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Property set method not found.
+2020-03-23 19:13:28.1587|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Property set method not found.
+2020-03-23 20:37:16.9960|ERROR|WebApp.Controllers.HomeController|???:???????(1).xlsx,PO:The ???? field is required.
+2020-03-23 22:45:11.0012|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Object reference not set to an instance of an object.
+2020-03-23 22:46:23.7709|ERROR|WebApp.Controllers.HomeController|???:??????(1).xlsx,Object reference not set to an instance of an object.
+2020-08-08 20:33:53.3612|FATAL|WebApp.MvcApplication|The view 'SummaryReport' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/PurchaseOrders/SummaryReport.aspx
+~/Views/PurchaseOrders/SummaryReport.ascx
+~/Views/Shared/SummaryReport.aspx
+~/Views/Shared/SummaryReport.ascx
+~/Views/PurchaseOrders/SummaryReport.cshtml
+~/Views/PurchaseOrders/SummaryReport.vbhtml
+~/Views/Shared/SummaryReport.cshtml
+~/Views/Shared/SummaryReport.vbhtml
+2020-09-03 20:06:02.0145|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:06:30.8173|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:07:32.2158|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:08:12.7667|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:10:27.8889|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:12:35.4385|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:16:01.8153|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:16:32.4398|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:22:35.4926|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:24:08.1484|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:33:05.5674|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:34:12.8717|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:35:00.5623|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:35:22.6268|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:35:54.3432|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:36:19.8901|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:37:27.6874|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:38:44.6732|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:39:17.7328|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:43:48.2169|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:45:17.4177|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:45:31.3479|FATAL|ASP.global_asax|The required anti-forgery form field "__RequestVerificationToken" is not present.
+2020-09-03 20:46:01.0433|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:48:29.4056|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:49:07.3261|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:49:34.2741|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:50:45.8925|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:51:41.4063|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-03 20:53:15.7332|FATAL|ASP.global_asax|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:06:05.4813|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:09:25.9198|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:09:59.7335|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:10:31.3411|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:14:00.2781|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:20:35.6835|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:22:18.0826|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:26:43.6252|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:28:06.3967|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:28:34.2310|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:29:05.1038|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:30:59.6055|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:32:20.6853|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:35:38.7692|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:38:46.5236|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:40:15.1504|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:40:38.6896|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:41:43.3516|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:42:09.9832|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:43:04.7434|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:43:30.9666|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:44:08.1669|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-27 21:46:06.1578|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-28 20:28:46.9769|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-28 20:29:29.2754|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-09-28 20:30:48.5499|FATAL|WebApp.MvcApplication|The controller for path '/sm/3a884fe0bdb97cb3a94b410e67cf38fdc248890d5581232077b3e6241e25cd21.map' was not found or does not implement IController.
+2020-10-26 20:13:33.4585|FATAL|WebApp.MvcApplication|A public action method 'GetDestroyData' was not found on controller 'WebApp.Controllers.PurchaseOrdersController'.
+2021-01-25 19:53:28.0885|FATAL|WebApp.MvcApplication|A public action method 'ConfirmRejectBid' was not found on controller 'WebApp.Controllers.PurchaseOrdersController'.
+2021-05-27 18:53:16.6460|FATAL|WebApp.MvcApplication|The controller for path '/Login/VerifyCode' was not found or does not implement IController.
+2021-05-27 18:53:17.7800|FATAL|WebApp.MvcApplication|The controller for path '/Login/VerifyCode' was not found or does not implement IController.
+2021-05-27 18:53:18.4721|FATAL|WebApp.MvcApplication|The controller for path '/Login/VerifyCode' was not found or does not implement IController.
+2021-05-27 19:00:53.5316|FATAL|WebApp.MvcApplication|???????????????
+2021-05-27 19:01:49.5431|FATAL|WebApp.MvcApplication|???????????????
+2021-06-01 18:56:14.8678|FATAL|WebApp.MvcApplication|???????????????
+2021-06-01 18:56:47.6231|FATAL|WebApp.MvcApplication|???????????????
+2021-06-05 15:28:31.6516|FATAL|WebApp.MvcApplication|???????????????
+2021-06-05 15:30:33.0317|FATAL|WebApp.MvcApplication|English Message : You need to refer to MySql.Data.dll
+Chinese Message : ????MySql.Data.dll,??Nuget????????,?????????????????

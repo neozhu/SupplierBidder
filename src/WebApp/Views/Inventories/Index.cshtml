@@ -1,0 +1,674 @@
+﻿@model WebApp.Models.Inventory
+@{
+  ViewBag.Title = "库存管理";
+}
+<!-- MAIN CONTENT -->
+<div id="content">
+
+  <!-- widget grid -->
+  <section id="widget-grid" class="">
+    <!-- row -->
+    <div class="row">
+      <!-- NEW WIDGET START -->
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-outboundbutton="false">
+          <!-- widget options:
+          usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+          data-widget-colorbutton="false"
+          data-widget-editbutton="false"
+          data-widget-togglebutton="false"
+          data-widget-outboundbutton="false"
+          data-widget-fullscreenbutton="false"
+          data-widget-custombutton="false"
+          data-widget-collapsed="true"
+          data-widget-sortable="false"
+          -->
+          <header>
+            <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+            <h2>库存管理</h2>
+          </header>
+
+          <!-- widget div-->
+          <div>
+            <!-- widget edit box -->
+            <div class="jarviswidget-editbox">
+              <!-- This area used as dropdown edit box -->
+            </div>
+            <!-- end widget edit box -->
+            <!-- widget content -->
+            <div class="widget-body no-padding">
+              <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+              </div>
+              <div class="chart-contain" style="padding:10px">
+                <div id="c1" style="width:100%"></div>
+              </div>
+
+              <div class="widget-body-toolbar">
+                <div class="row">
+                  <div class="col-sm-8  ">
+                    <!-- 开启授权控制请参考 @@if (Html.IsAuthorize("Create") -->
+                    <div class="btn-group btn-group-sm">
+                      <button onclick="reload()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="查询"> <i class="fa fa-search"></i> 查询 </button>
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a href="javascript:allquery()"><i class="fa fa-search-plus"></i> 包含库存为零的记录 </a></li>
+
+                      </ul>
+                    </div>
+
+                    <div class="btn-group btn-group-sm">
+                      <button name="outboundbutton" disabled onclick="outbound()" class="btn btn-default btn-info">
+                        <i class="fa fa-calendar-times-o"></i> 领用登记
+                      </button>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                      <button name="allocatebutton" disabled onclick="allocate()" class="btn btn-default btn-success">
+                        <i class="fa fa-bar-chart"></i> 分拨二级库
+                      </button>
+                    </div>
+                    <div class="btn-group btn-group-sm hidden-xs hidden-md">
+                      <button onclick="exportexcel()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="@Html.L("Export")"> <i class="fa fa-file-excel-o"></i> @Html.L("Export") </button>
+                    </div>
+
+                  </div>
+                  <div class="col-sm-4 text-align-right visible-lg-inline-block">
+
+                  </div>
+                </div>
+
+              </div>
+              <div class="alert alert-warning no-margin fade in">
+                <button class="close" data-dismiss="alert">
+                  ×
+                </button>
+                <i class="fa-fw fa fa-info"></i>
+                注意事项:
+              </div>
+              <!--begin datagrid-content -->
+              <div class="table-responsive">
+                <table id="inventories_datagrid">
+                </table>
+              </div>
+              <!--end datagrid-content -->
+            </div>
+            <!-- end widget content -->
+          </div>
+          <!-- end widget div -->
+        </div>
+        <!-- end widget -->
+      </article>
+      <!-- WIDGET END -->
+    </div>
+    <!-- end row -->
+  </section>
+  <!-- end widget grid -->
+  <!-- file upload partial view -->
+  <!-- RenderPartial() does exactly the same thing and is better for performance over Partial() -->
+  <!-- end file upload partial view -->
+  <!-- detail popup window -->
+  <!-- end detail popup window -->
+
+</div>
+<!-- END MAIN CONTENT -->
+
+@section styles{
+  <link rel="stylesheet" href="@Fingerprint.Tag("/scripts/easyui/themes/insdep/easyui.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/easyui/themes/insdep/icon.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/toastr/toastr.min.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/daterangepicker/daterangepicker.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/font/font-fileuploader.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/jquery.fileuploader.min.css")" />
+  <link rel="stylesheet" href="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/jquery.fileuploader-theme-dragdrop.css")" />
+  <style>
+    .progressbarjs {
+      margin-bottom: 10px;
+      width: 100%;
+      height: 4px;
+    }
+  </style>
+}
+@section Scripts {
+  <script src="~/Scripts/plugin/select2/select2.min.js"></script>
+  <script src="~/Scripts/plugin/progressbar/progressbar.min.js"></script>
+
+  @{ Html.RenderPartial("_PopupDetailFormView", new WebApp.Models.Inventory()); }
+  @{ Html.RenderPartial("_PopupAllocateFormView", new WebApp.Models.Inventory()); }
+  @{ Html.RenderPartial("_transhistory", new WebApp.Models.Inventory()); }
+
+  <script src="@Fingerprint.Tag("/Scripts/plugin/daterangepicker/daterangepicker.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/jquery.easyui.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/plugins/datagrid-filter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/plugins/columns-ext.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/plugins/columns-reset.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.easyui.component.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/jquery.extend.formatter.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/easyui/locale/easyui-lang-zh_CN.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/plugin/jquery.fileuploader/jquery.fileuploader.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/plugin/filesaver/FileSaver.min.js")"></script>
+  <script src="@Fingerprint.Tag("/Scripts/plugin/filesaver/jquery.fileDownload.js")"></script>
+  <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.15/dist/g2.min.js"></script>
+  <script>
+    $(async () => {
+
+      const data = await $.get('/Inventories/GetIOChartData');
+      console.log(data)
+      var margin = 1 / data.length;
+      // Step 1: 创建 Chart 对象
+
+      const chart = new G2.Chart({
+        container: 'c1',
+        autoFit: true,
+        height: 300,
+      });
+      chart.scale({
+        qty: {
+          sync: true,
+          nice: true,
+          alias: '数量',
+          min: 0,
+        },
+        date: {
+          alias: '月份',
+        },
+        direct: {
+          alias: '收货/领用/下拨',
+        }
+      });
+      chart.data(data);
+      chart.axis('value', false);
+      chart.legend({
+        position: 'right',
+        offsetX: -50
+
+      });
+      chart.tooltip({
+        shared: true,
+        showMarkers: false,
+      });
+      chart.interaction('active-region');
+      chart
+        .interval()
+        .position('date*qty')
+        .color('direct', ['#64B5F6', '#7CB342','#8E24AA'])
+        .adjust([
+          {
+            type: 'dodge',
+            marginRatio: 0,
+          },
+        ])
+        .label('value', (val) => {
+          return {
+            position: 'middle',
+            offset: 0,
+            content: (originData) => {
+              return originData.value;
+            },
+            style: {
+              stroke: '#fff'
+            }
+          };
+        });
+      chart.render();
+    })
+  </script>
+  <script type="text/javascript">
+
+
+
+      //是否强制从后台取值
+      const REQUIRBACKEND = false;
+      //是否开启行内编辑
+      const EDITINLINE = true;
+      var inventory = {};
+    function outbound() {
+      var data = $dg.datagrid('getChecked').filter(x =>   x.Qty > 0);
+      if (data.length > 0) {
+        openinventorydetailwindow(data);
+      } else {
+        $.messager.alert('提示', '请选择正常，并且库存大于0的数据');
+      }
+
+    }
+
+    function allocate() {
+      var data = $dg.datagrid('getChecked').filter(x => x.Qty > 0);
+      if (data.length > 0) {
+        openallocatewindow(data);
+      } else {
+        $.messager.alert('提示', '请选择正常，并且库存大于0的数据');
+      }
+    }
+    function allquery() {
+      $dg.datagrid('load', '/Inventories/GetData?nz=false');
+    }
+       //执行导出下载Excel
+       function exportexcel() {
+                const filterRules = JSON.stringify($dg.datagrid('options').filterRules);
+                //console.log(filterRules);
+                $.messager.progress({ title: '正在执行导出!' });
+                let formData = new FormData();
+                formData.append('filterRules', filterRules);
+                formData.append('sort', 'Id');
+                formData.append('order', 'asc');
+                $.postDownload('/Inventories/ExportExcel', formData).then(res => {
+                    $.messager.progress('close');
+                    toastr.success('导出成功!');
+                }).catch(err => {
+                    //console.log(err);
+                    $.messager.progress('close');
+                    $.messager.alert('导出失败', err.statusText, 'error');
+                });
+
+        }
+
+       //重新加载数据
+    function reload() {
+      $dg.datagrid('load', '/Inventories/GetData?nz=true');
+            $dg.datagrid('unselectAll');
+            $dg.datagrid('uncheckAll');
+            $dg.datagrid('reload');
+       }
+
+
+    //弹出明细信息
+    async function showdetailswindow(id,index) {
+        const inventory = $dg.datagrid('getRows')[index];
+
+        openinventorydetailwindow(inventory,'Modified');
+    }
+
+    //初始化定义datagrid
+    var $dg = $('#inventories_datagrid');
+    $(() => {
+        //定义datagrid结构
+       $dg.datagrid({
+                        //fit: false,
+                        //height: window.innerHeight - 385,
+                        rownumbers:true,
+                        checkOnSelect:false,
+                        selectOnCheck:false,
+                        idField:'Id',
+                        sortName:'Id',
+                        sortOrder:'desc',
+                        remoteFilter: true,
+                        singleSelect: true,
+                        //url: '/Inventories/GetData',
+                        method: 'get',
+                        pagination: true,
+                        clientPaging:false,
+                        striped:true,
+                        pageList: [10, 20, 50, 100, 500,2000],
+                        filterRules: [],
+                        onBeforeLoad: function () {
+                           //datagrid resize when jarvisWidgets resized.
+                           const that = $(this);
+                           $(window).on("resize.jarvisWidgets", () => {
+                               that.datagrid('resize');
+                           })
+                         },
+                         onLoadSuccess: function (data) {
+                            editIndex = undefined;
+
+                        },
+                        onCheck: function () {
+                          $("button[name*='outboundbutton']").prop('disabled', false);
+                          $("button[name*='allocatebutton']").prop('disabled', false);
+                        },
+                        onUncheck: function () {
+                           const checked = $(this).datagrid('getChecked').length > 0;
+                          $("button[name*='outboundbutton']").prop('disabled', !checked);
+                          $("button[name*='allocatebutton']").prop('disabled', !checked);
+                        },
+                        onCheckAll: function () {
+                          $("button[name*='outboundbutton']").prop('disabled', false);
+                          $("button[name*='allocatebutton']").prop('disabled', false);
+                        },
+                        onUncheckAll: function () {
+                          $("button[name*='outboundbutton']").prop('disabled', true);
+                          $("button[name*='allocatebutton']").prop('disabled', true);
+                        },
+                        onSelect: function(index,row) {
+                           inventory = row;
+                        },
+                        frozenColumns: [[
+                         /*开启CheckBox选择功能*/
+                         { field: 'ck', checkbox: true },
+                          {
+                            field: 'action',
+                            title: '@Html.L("Command")',
+                            width: 65,
+                            align:'center',
+                            sortable: false,
+                            resizable: true,
+                            formatter: function showdetailsformatter(value, row, index) {
+                              return `<div class="btn-group">\
+                                                         <button onclick="openhistorywindow('${row.Id}',  ${index})" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="right" title="领用记录" ><i class="fa fa-list-alt"></i> </button>\
+                                      </div>`;
+
+                            }
+                          }
+                        ]],
+                        columns: [[
+
+            {    /*采购单号*/
+                 field:'PO',
+                 title:'<span class="text-danger">*</span>@Html.DisplayNameFor(model => model.PO)',
+                 width:120,
+                 hidden:false,
+
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*序号*/
+                 field:'LineNum',
+                 title:'<span class="text-danger">*</span>@Html.DisplayNameFor(model => model.LineNum)',
+                 width:80,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+                          },
+            {    /*品名*/
+                 field:'ProductName',
+                 title:'<span class="text-danger">*</span>@Html.DisplayNameFor(model => model.ProductName)',
+                 width:180,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*规格*/
+                 field:'Spec',
+                 title:'@Html.DisplayNameFor(model => model.Spec)',
+                 width:160,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*品牌*/
+              field:'BrandName',
+                 title:'@Html.DisplayNameFor(model => model.BrandName)',
+                 width:160,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*单位*/
+                 field:'Unit',
+                 title:'@Html.DisplayNameFor(model => model.Unit)',
+                 width:80,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*库存数量*/
+                 field:'Qty',
+                 title:'<span class="text-danger">*</span>@Html.DisplayNameFor(model => model.Qty)',
+                 width:100,
+                 align:'right',
+                 hidden:false,
+                formatter:numberformatter,
+                sortable:true,
+                resizable:true
+            },
+            {   /*入库日期*/
+                field:'ReceivedDate',
+                title:'@Html.DisplayNameFor(model => model.ReceivedDate)',
+                width:100,
+                align:'right',
+                hidden:false,
+                formatter:dateformatter,
+                sortable:true,
+                resizable:true
+                          },
+            {   /*出库日期*/
+                field:'OutboundDate',
+                title:'@Html.DisplayNameFor(model => model.OutboundDate)',
+                width:100,
+                align:'right',
+                hidden:false,
+                formatter:dateformatter,
+                sortable:true,
+                resizable:true
+            } ,
+
+
+            {    /*库存状态*/
+                 field:'InvStatus',
+                 title:'<span class="text-danger">*</span>@Html.DisplayNameFor(model => model.InvStatus)',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+
+
+
+            {    /*参数*/
+                 field:'Feature',
+                 title:'@Html.DisplayNameFor(model => model.Feature)',
+                 width:260,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*备注*/
+                 field:'Description',
+                 title:'@Html.DisplayNameFor(model => model.Description)',
+                 width:260,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*申请人*/
+                 field:'Buyer',
+                 title:'@Html.DisplayNameFor(model => model.Buyer)',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*申请人电话*/
+                 field:'BuyerPhone',
+                 title:'@Html.DisplayNameFor(model => model.BuyerPhone)',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {   /*发标日期*/
+                field:'BiddingDate',
+                title:'@Html.DisplayNameFor(model => model.BiddingDate)',
+                width:100,
+                align:'right',
+                hidden:false,
+                formatter:dateformatter,
+                sortable:true,
+                resizable:true
+            } ,
+
+            {   /*发货日期*/
+                field:'ShippingDate',
+                title:'@Html.DisplayNameFor(model => model.ShippingDate)',
+                width:100,
+                align:'right',
+                hidden:false,
+                formatter:dateformatter,
+                sortable:true,
+                resizable:true
+            } ,
+
+            {    /*中标供应商*/
+                 field:'SupplierName',
+                 title:'@Html.DisplayNameFor(model => model.SupplierName)',
+                 width:200,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {   /*结案日期*/
+                field:'ClosedDate',
+                title:'@Html.DisplayNameFor(model => model.ClosedDate)',
+                width:100,
+                align:'right',
+                hidden:false,
+                formatter:dateformatter,
+                sortable:true,
+                resizable:true
+            } ,
+            {    /*采购单类别*/
+                 field:'Category',
+                 title:'@Html.DisplayNameFor(model => model.Category)',
+                 width:260,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*申请部门*/
+                 field:'Dept',
+                 title:'@Html.DisplayNameFor(model => model.Dept)',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*申请科室*/
+                 field:'Section',
+                 title:'@Html.DisplayNameFor(model => model.Section)',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+            {    /*科研号或名称*/
+                 field:'GrantNo',
+                 title:'@Html.DisplayNameFor(model => model.GrantNo)',
+                 width:120,
+                 hidden:false,
+                 sortable:true,
+                 resizable:true
+            },
+
+                 ]]
+           })
+             .datagrid('enableFilter',[
+                /*需要在键值队维护好status枚举值*/
+                {  /*采购单状态*/
+                      field: 'Status',
+                      type: 'statusfilter',
+                      options: {
+
+                               }
+                 },
+                {   /*主键*/
+                      field: 'Id',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*库存数量*/
+                      field: 'Qty',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*控制单价*/
+                      field: 'ControlledPrice',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*出价次数*/
+                      field: 'BiddingTime',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*竞标人数*/
+                      field: 'BiddingUsers',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*最低价*/
+                      field: 'MinPrice',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*最高价*/
+                      field: 'MaxPrice',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {   /*中标价格*/
+                      field: 'BidedPrice',
+                      type: 'numberbox',
+                      op:['equal','notequal','less','lessorequal','greater','greaterorequal']
+                  },
+                {     /*申请日期*/
+                      field: 'PODate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*入库日期*/
+                      field: 'ReceivedDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*出库日期*/
+                      field: 'OutboundDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*发标日期*/
+                      field: 'BiddingDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*询价截止日期*/
+                      field: 'DueDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*要求到货日期*/
+                      field: 'DemandedDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*发货日期*/
+                      field: 'ShippingDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*开标日期*/
+                      field: 'OpenDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+                {     /*结案日期*/
+                      field: 'ClosedDate',
+                      type: 'dateRange',
+                      options: {
+                      }
+                  },
+           ])
+           .datagrid('load', '/Inventories/GetData');
+     });
+
+  </script>
+
+
+
+}
+
+

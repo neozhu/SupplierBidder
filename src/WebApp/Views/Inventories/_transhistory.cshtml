@@ -1,0 +1,263 @@
+﻿﻿@model WebApp.Models.Inventory
+<!-- 弹出窗体form表单 -->
+<div id="historywindow" hidden="hidden" class="easyui-window"
+     title="库存历史记录"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:true,
+                   onBeforeClose:function(){
+                      
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:450px;display:none">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+           
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="container">
+    <div class="widget-body">
+      <form id="outform">
+        <div class="progressbarjs" id="progressbar"></div>
+        <!--Primary Key-->
+        <fieldset>
+          <legend>收货记录</legend>
+          <div class="table-responsive" style="margin-top:5px">
+            <table id="inputhistorytable" class="table table-bordered" style="table-layout:fixed">
+              <thead>
+                <tr>
+                  <th width="100px">
+                    采购单号
+                  </th>
+                  <th width="50px">
+                    行号
+                  </th>
+                  <th>
+                    品名
+                  </th>
+                  <th>
+                    规格
+                  </th>
+                  <th>
+                    参数
+                  </th>
+                  <th>
+                    投标品牌
+                  </th>
+                  <th width="80px">
+                    收获数量
+                  </th>
+                  <th width="50px">
+                    单位
+                  </th>
+                  <th width="100px">
+                    收货日期
+                  </th>
+
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>领用记录</legend>
+
+          <div class="table-responsive" style="margin-top:5px">
+            <table id="outputhistorytable" class="table table-bordered" style="table-layout:fixed">
+              <thead>
+                <tr>
+                  <th width="100px">
+                    采购单号
+                  </th>
+                  <th width="50px">
+                    行号
+                  </th>
+                  <th>
+                    品名
+                  </th>
+                  <th>
+                    规格
+                  </th>
+                  <th>
+                    参数
+                  </th>
+                  <th>
+                    投标品牌
+                  </th>
+                  <th width="80px">
+                    领用数量
+                  </th>
+                  <th width="80px">
+                    库存余量
+                  </th>
+                  <th width="50px">
+                    单位
+                  </th>
+                  <th width="180px">申请备注</th>
+                  <th>领用人</th>
+                  <th width="100px">
+                    领用日期
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>下拨记录</legend>
+
+          <div class="table-responsive" style="margin-top:5px">
+            <table id="allocatedtable" class="table table-bordered" style="table-layout:fixed">
+              <thead>
+                <tr>
+                  <th width="100px">
+                    采购单号
+                  </th>
+                  <th width="50px">
+                    行号
+                  </th>
+                  <th>
+                    品名
+                  </th>
+                  <th>
+                    规格
+                  </th>
+                  <th>
+                    参数
+                  </th>
+                  <th>
+                    二级库品名
+                  </th>
+                  <th width="80px">
+                    下拨数量
+                  </th>
+                  <th width="80px">
+                    库存余量
+                  </th>
+                  <th width="50px">
+                    单位
+                  </th>
+                  <th width="100px">
+                    下拨日期
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
+      </form>
+
+      <!--end form表单界面-->
+      <!--========================================================================================-->
+    </div>
+  </div>
+  <!--end window body -->
+</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+  var inventoryid = null;
+  function openhistorywindow(id) {
+    var bar = new ProgressBar.Line(`#progressbar`, {
+      easing: 'easeInOut',
+      duration: 2400,
+      color: '#57889c',
+      trailColor: '#eee',
+      trailWidth: 1,
+    });
+    bar.animate(1.0); 
+    $('#historywindow').window('open');
+    $('#inputhistorytable > tbody').empty();
+    $('#outputhistorytable > tbody').empty();
+    $('#allocatedtable > tbody').empty();
+    $.get('/Inventories/GetHistories/' + id).done(res => {
+      res.Item1.map(item => {
+        const tr = `<tr>
+                    <td>${item.PO}</td>
+                    <td>${item.LineNum}</td>
+                    <td>${item.ProductName}</td>
+                    <td>${item.Spec||''}</td>
+                    <td>${item.Feature || ''}</td>
+                    <td>${item.BrandName || ''}</td>
+                    <td>${item.Qty}</td>
+                    <td>${item.Unit}</td>
+                    <td>${moment(item.ReceivedDate).format('YYYY-MM-DD')}</td>
+
+</tr>`
+        $('#inputhistorytable > tbody').append(tr);
+      });
+      res.Item2.map(item => {
+        const tr = `<tr>
+                    <td>${item.PO}</td>
+                    <td>${item.LineNum}</td>
+                    <td>${item.ProductName}</td>
+                    <td>${item.Spec || ''}</td>
+                    <td>${item.Feature || ''}</td>
+                    <td>${item.BrandName || ''}</td>
+                    <td>${item.Qty}</td>
+                    <td>${item.StockQty}</td>
+                    <td>${item.Unit}</td>
+                    <td>${item.Remark || ''}</td>
+                    <td>${item.RecordUser || ''}</td>
+                    <td>${moment(item.OutboundDate).format('YYYY-MM-DD')}</td>
+</tr>`
+        $('#outputhistorytable > tbody').append(tr);
+      });
+      res.Item3.map(item => {
+        const tr = `<tr>
+                    <td>${item.PO}</td>
+                    <td>${item.LineNum}</td>
+                    <td>${item.ProductName}</td>
+                    <td>${item.Spec || ''}</td>
+                    <td>${item.Feature || ''}</td>
+                    <td>${item.Remark || ''}</td>
+                    <td>${item.Qty}</td>
+                    <td>${item.StockQty}</td>
+                    <td>${item.Unit}</td>
+                    <td>${moment(item.OutboundDate).format('YYYY-MM-DD')}</td>
+</tr>`
+        $('#allocatedtable > tbody').append(tr);
+      });
+      bar.destroy();
+
+    }).fail(() => {
+      bar.destroy();
+    })
+
+  }
+
+   
+  
+
+</script>
+

@@ -1,0 +1,241 @@
+﻿﻿@model WebApp.Models.ViewModel.BidViewModel
+<!-- 弹出窗体form表单 -->
+<div id="batchbidwindow" hidden="hidden" class="easyui-window"
+     title="出价"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    footer:'#windowfooter',
+                    closeDuration:200,
+                    closeAnimation:'slide',
+                    openDuration:300,
+                    openAnimation:'slide',
+                    onBeforeClose:function(){
+                      var that = $(this);
+                      if(batchbidhasmodified()){
+                        $.messager.confirm('确认','你确定要放弃保存修改的记录?',function(r){
+                        if (r){
+                          var opts = that.panel('options');
+                          var onBeforeClose = opts.onBeforeClose;
+                          opts.onBeforeClose = function(){};
+                          that.panel('close');
+                          opts.onBeforeClose = onBeforeClose;
+                          hook = false;
+                        }
+                        });
+                        return false;
+                      }
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:1020px;height:420px">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          <button name="saveitembutton" onclick="savebiditem()" class="btn btn-default">
+            <i class="fa fa-gavel"></i> 出价
+          </button>
+        </div>
+        
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closebatchbidwindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="widget-body">
+    <form id="bid_form"
+          class="easyui-form form-horizontal padding-10"
+          method="post"
+          data-options="novalidate:true,
+                            onChange: function(target){
+                              hook = true;
+                              $('button[name*=\'saveitembutton\']').prop('disabled', false);
+                             },
+                             onLoadSuccess:function(data){
+                               hook = false;
+                               $('button[name*=\'saveitembutton\']').prop('disabled', true);
+                             }">
+      @Html.AntiForgeryToken()
+      <!--Primary Key-->
+      @Html.HiddenFor(model => model.Id)
+      <fieldset>
+        <legend>我的出价信息</legend>
+        <!--货号-->
+        <div class="form-group  col-md-12">
+          <div class="form-group  col-md-12">
+            <div class="table-responsive">
+              <table id="table2" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>品名</th>
+                    <th>品牌</th>
+                    <th>规格</th>
+                    <th>参数</th>
+                    <th>数量</th>
+                    <th>单位</th>
+                    <th>出价</th>
+                    <th>总价</th>
+                    <th>备注</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot>
+                  <span>出价人：演示账号</span>
+                  <span style="padding-left:20px">供应商：DELL</span>
+                  <span style="float:right">总价：￥9999,999.00</span>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!--品名-->
+        
+        
+      </fieldset>
+      <fieldset>
+        <!-- begin row -->
+        <legend>采购单信息</legend>
+        <!--采购单号-->
+        <div class="form-group  col-md-12">
+           <div class="table-responsive">
+             <table id="table1" class="table table-bordered table-hover" >
+               <thead>
+                 <tr>
+                   <th>序号</th>
+                   <th>品名</th>
+                   <th>品牌</th>
+                   <th>规格</th>
+                   <th>参数</th>
+                   <th>数量</th>
+                   <th>单位</th>
+                   <th>备注</th>
+                 </tr>
+               </thead>
+               <tbody>
+                
+               </tbody>
+             </table>
+          </div>
+        </div>
+        
+      </fieldset>
+      
+    </form>
+
+    <!--end form表单界面-->
+    <!--========================================================================================-->
+  </div>
+  <!--end window body -->
+</div>
+<div id="windowfooter" style="padding:5px;">&nbsp;</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+
+  function openbatchbidwindow(data) {
+ 
+    $('#batchbidwindow').window('open');
+    data.forEach(item => {
+      const row1 = `<tr>
+                   <td>${item.LineNum}</td>
+                   <td>${item.ProductName}</td>
+                   <td>${item.BrandName}</td>
+                   <td>${item.Spec}</td>
+                   <td>${item.Feature}</td>
+                   <td>${item.Qty}</td>
+                   <td>${item.Unit}</td>
+                   <td>${item.Description}</td>
+                 </tr>`
+      const row2=`<tr>
+                   <td>${item.LineNum}</td>
+                   <td>${item.ProductName}</td>
+                   <td><input class="form-control" name="productname" value="${item.BrandName}"></td>
+                   <td><input class="form-control" name="spec" value="${item.Spec}"> </td>
+                   <td><input class="form-control" name="feature" value="${item.Feature}"> </td>
+                   <td>${item.Qty}</td>
+                   <td>${item.Unit}</td>
+                   <td><input class="form-control" style="width:50px;padding:4px" name="biddingprice" value=""> </td>
+                    <td>￥0.00</td>
+                   <td><input class="form-control" name="remark" value=""></td>
+                 </tr>`
+      $("#table1 tbody").append(row1);
+      $("#table2 tbody").append(row2); 
+
+    })
+  }
+
+  //async 保存数据
+  async function savebiditem() {
+    const $bidform = $('#bid_form');
+    if ($bidform.form('enableValidation').form('validate')) {
+      let viewmodel = $bidform.serializeJSON();
+      let url = '/PurchaseOrders/Bid';
+      var token = $('input[name="__RequestVerificationToken"]', $bidform).val();
+      $.messager.progress({ title: '请等待', msg: '正在保存数据...', interval: 200 });
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+          __RequestVerificationToken: token,
+          viewmodel: viewmodel
+        },
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8'
+      })
+        .done(response => {
+          $.messager.progress('close');
+          if (response.success) {
+            hook = false;
+            $bidform.form('disableValidation');
+            $dg.datagrid('reload');
+            $('#batchbidwindow').window("close");
+            toastr.success("保存成功");
+          } else {
+            $.messager.alert("错误", response.err, "error");
+          }
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          $.messager.progress('close');
+          $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+        });
+    }
+  }
+  //关闭窗口
+  function closebatchbidwindow() {
+    $('#batchbidwindow').window('close');
+  }
+  //todo
+
+  //判断是否有没有保存的记录
+  function batchbidhasmodified() {
+    return hook;
+
+  }
+
+
+  
+</script>
+

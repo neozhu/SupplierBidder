@@ -1,0 +1,289 @@
+﻿﻿@model WebApp.Models.ViewModel.BidViewModel
+<!-- 弹出窗体form表单 -->
+<div id="openbidwindow" hidden="hidden" class="easyui-window"
+     title="开始开标"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:false,
+                    iconCls:'icon-more',
+                    footer:'#windowfooter',
+                    closeDuration:200,
+                    closeAnimation:'slide',
+                    openDuration:300,
+                    openAnimation:'slide',
+                    onBeforeClose:function(){
+                      
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:1020px;height:420px">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          
+        </div>
+        
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn   btn-success" onclick="closeopenbidwindow()">
+            <i class="fa fa-chevron-left"></i>
+            @Html.L("Close")
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="widget-body">
+    <form class="easyui-form form-horizontal padding-10">
+      <!--采购单号-->
+      <fieldset>
+        <div class="form-group  col-md-12">
+          <div class="table-responsive">
+            <table id="table1" class="table table-bordered table-hover">
+
+              <thead>
+                <tr>
+                  <th>操作</th>
+                  <th>序号</th>
+                  <th>科研号</th>
+                  <th>品名</th>
+                  <th>建议品牌</th>
+                  <th>规格</th>
+                  <th>参数</th>
+                  <th>数量</th>
+                  <th>单位</th>
+                  <th class="text-success">最低价</th>
+                  <th class="text-danger">最高价</th>
+                  <th class="text-primary">控制价</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <!--end form表单界面-->
+    <!--========================================================================================-->
+  </div>
+  <!--end window body -->
+</div>
+<div id="windowfooter" style="padding:5px;">&nbsp;</div>
+<style>
+  #table1 .hidden_row
+{
+ display:none;
+}
+</style>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+
+  function openopenbidwindow(data) {
+ 
+    $('#openbidwindow').window('open');
+    $("#table1 tbody").empty();
+    data.forEach((item,i) => {
+      const row1 = `<tr>
+                   <td><button onClick="expandrow(${item.Id}) " class="btn btn-default btn-sm btn-success">开标</button></td>
+                   <td>${item.LineNum}</td>
+                   <td>${item.GrantNo}</td>
+                   <td>${item.ProductName}</td>
+                   <td>${item.BrandName}</td>
+                   <td>${item.Spec}</td>
+                   <td>${item.Feature}</td>
+                   <td>${item.Qty}</td>
+                   <td>${item.Unit}</td>
+                   <td class="text-success" > ${numeral(item.MinPrice).format('0,0.00')} </td>
+                   <td class="text-danger" >${numeral(item.MaxPrice).format('0,0.00')} </td>
+                   <td class="text-primary" >${numeral(item.ControlledPrice).format('0,0.00')} </td>
+                 </tr>
+                <tr id="table_row_${item.Id}" class="hidden_row">
+                <td colspan=12 id="container_${item.Id}">
+                    <div class="widget-body">
+<div class="progressbarjs" id="progressbar_${item.Id}"></div>
+	                    <div class="row" >
+<div class="col-md-12">所有出价记录</div>
+                      <div class="col-md-12">
+                      <table class="table table-bordered" id="table_record_${item.Id}">
+                        
+                      </table>
+                    </div>
+										</div>
+                </td>
+                </tr>`
+      
+      $("#table1 tbody").append(row1);
+   
+
+    })
+  }
+  
+
+  function expandrow(id) {
+    $(`#table_row_${id}`).toggle();
+    const show = $(`#table_row_${id}`).is(':visible');
+    if (show) {
+      loadbiddingrecord(id)
+    }
+
+  }
+  async function loadbiddingrecord(id) {
+   $(`#progressbar_${id}`).show();
+    var bar = new ProgressBar.Line(`#progressbar_${id}`, {
+      easing: 'easeInOut',
+      duration: 2400,
+      color: '#57889c',
+      trailColor: '#eee',
+      trailWidth: 1,
+    });
+
+    bar.animate(1.0); 
+    $(`#table_record_${id}`).empty();
+    $(`#table_record_${id}`).append(`<thead><tr>
+          <td>中标</td>
+          <td>记录</td>
+          <td>出价时间</td>
+          <td>供应商</td>
+          <td>投标品牌</td>
+          <td>投标规格</td>
+          <td>投标参数</td>
+          <td>单位</td>
+          <td>数量</td>
+          <td>投标价</td>
+          <td>总价</td>
+          <td>交货周期(天)</td>
+          <td>投标备注</td>
+         </tr></thead><tbody></tbody>`)
+    
+    const result = await $.get(`/Biddings/GetBidingHistory?purchaseorderid=${id}`);
+    result.forEach(item => {
+      if (item.Status == '待开标') {
+        $(`#table_record_${id} tbody`).append(`<tr>
+          <td>
+          <button
+              onClick="outbid(${id},${item.Id},'${item.BiddingPrice}','${item.SupplierName}')"
+              class="btn btn-default btn-sm btn-success">
+              <i class="fa fa-gavel"></i> 中标
+          </button></td>
+          <td>${item.Id}</td>
+          <td>${moment(item.BiddingDate).format('MM-DD HH:mm')}</td>
+          <td>${item.SupplierName }</td>
+          <td>${item.BrandName }</td>
+          <td>${item.Spec }</td>
+          <td>${item.Feature }</td>
+          <td>${item.Unit }</td>
+          <td>${numeral(item.Qty).format('0,0.0')}</td>
+          <td>${numeral(item.BiddingPrice).format('0,0.00')}</td>
+          <td>${numeral(item.TotalPrice).format('0,0.00')}</td>
+          <td>${item.DeliveryCycle }</td>
+          <td>${item.Description }</td>
+         </tr>`)
+      } else {
+        $(`#table_record_${id} tbody`).append(`<tr>
+          <td>
+          <span class="label ${item.Status=='中标'?'label-success':'label-default'}">${item.Status}</span></td>
+          <td>${item.Id}</td>
+          <td>${moment(item.BiddingDate).format('MM-DD HH:mm')}</td>
+          <td>${item.SupplierName }</td>
+          <td>${item.BrandName }</td>
+          <td>${item.Spec }</td>
+          <td>${item.Feature }</td>
+          <td>${item.Unit }</td>
+          <td>${numeral(item.Qty).format('0,0.0')}</td>
+          <td>${numeral(item.BiddingPrice).format('0,0.00')}</td>
+          <td>${numeral(item.TotalPrice).format('0,0.00')}</td>
+      <td>${item.DeliveryCycle }</td>
+          <td>${item.Description }</td>
+         </tr>`)
+      }
+
+     
+    })
+    bar.destroy();
+    $(`#progressbar_${id}`).hide()
+  }
+  function setdefaultreason() {
+    $('#reason').textbox('setValue','最低价中标');
+  }
+  function setdefaultreason2() {
+    $('#reason').textbox('setValue', '最低价产品不符合要求，选择第二低价中标');
+  }
+  //确认中标
+  function confirmoutbid() {
+    const reason = $('#reason').textbox('getValue');
+    if (reason.length > 0) {
+      const pid = $('#ddpid').val();
+      const bid = $('#ddbid').val();
+      const url = `/PurchaseOrders/OutBid?purchaseorderid=${pid}&bidid=${bid}&reason=${reason}`;
+      $.get(url).done(response => {
+        if (response.success) {
+          loadbiddingrecord(pid);
+          reload();
+          toastr.success("中标完成");
+          $('#ddconfirm').window('close');
+        } else {
+          $.messager.alert("错误", response.err, "error");
+        }
+      })
+    } else {
+      $.messager.alert('提示', '请输入中标原因');
+      return;
+    }
+
+  }
+  function outbid(pid, bid, price, supplier) {
+    $('#ddconfirm').window('open');
+    $('#labelsuplier').text(`中标供应商:${supplier}`);
+    $('#labelprice').text(`单价:${numeral(price).format('0,0.00')}`);
+    $('#ddpid').val(pid);
+    $('#ddbid').val(bid);
+    return;
+    $.messager.confirm('确认中标', `你确定选择供应商: ${supplier},中标价: ${numeral(price).format('0,0.00')} 中标?`, function (r) {
+      if (r) {
+        const url = `/PurchaseOrders/OutBid?purchaseorderid=${pid}&bidid=${bid}`;
+        $.get(url).done(response => {
+
+          if (response.success) {
+            loadbiddingrecord(pid);
+            reload();
+            toastr.success("中标完成");
+          } else {
+            $.messager.alert("错误", response.err, "error");
+          }
+        })
+      }
+    });
+  }
+  //关闭窗口
+  function closeopenbidwindow() {
+    $('#openbidwindow').window('close');
+  }
+  //todo
+
+  //判断是否有没有保存的记录
+  function batchbidhasmodified() {
+    return hook;
+
+  }
+
+
+  
+</script>
+

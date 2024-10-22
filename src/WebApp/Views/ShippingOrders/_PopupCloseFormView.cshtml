@@ -1,0 +1,253 @@
+﻿﻿@model WebApp.Models.PurchaseOrder
+<!-- 弹出窗体form表单 -->
+<div id="closewindow" hidden="hidden" class="easyui-window"
+     title="结案确认"
+     data-options="modal:true,
+                    closed:true,
+                    minimizable:false,
+                    collapsible:false,
+                    maximized:true,
+                    iconCls:'icon-more',
+                    onBeforeClose:function(){
+
+                    },
+                    onOpen:function(){
+                       $(this).window('vcenter');
+                       $(this).window('hcenter');
+                    },
+                    onRestore:function(){
+                    },
+                    onMaximize:function(){
+                    }
+                    " style="width:800px;height:450px;display:none">
+  <!-- begin toolbar -->
+  <div class="window-body-toolbar">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="btn-group btn-group-sm">
+          <button name="saveitembutton" onclick="confirmClose()" class="btn btn-default">
+            <i class="fa fa-floppy-o"></i> 确认结案
+          </button>
+        </div>
+
+      </div>
+      <div class="col-sm-4 text-align-right">
+        <div class="btn-group btn-group-sm">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end toolbar -->
+  <!-- begin window body -->
+  <div class="container">
+    <div class="widget-body">
+      <form id="closeform" class="smart-form" novalidate="novalidate">
+        <input type="hidden" id="PurchaseOrderId" name="PurchaseOrderId" value=""/>
+        <fieldset>
+          <div class="row">
+            <section class="col col-4">
+              <label class="label">发票号</label>
+              <label class="input">
+                <input type="text" name="InvoiceNo" id="InvoiceNo" required>
+              </label>
+            </section>
+            <section class="col col-4">
+              <label class="label">发票金额</label>
+              <label class="input">
+                <input type="number" name="InvoiceAmount" id="InvoiceAmount" required>
+              </label>
+            </section>
+            <section class="col col-4">
+              <label class="label">汇总金额</label>
+              <label class="input">
+                <input type="text" name="totalamount" id="totalamount" readonly>
+              </label>
+            </section>
+          </div>
+        </fieldset>
+ 
+        <div class="table-responsive" style="margin-top:5px">
+          <table id="receipttable" class="table table-bordered" style="table-layout:fixed">
+            <thead>
+              <tr>
+                <th width="100px">
+                  采购单号
+                </th>
+                <th width="50px">
+                  行号
+                </th>
+                <th>
+                  品名
+                </th>
+                <th>
+                  规格
+                </th>
+                <th>
+                  参数
+                </th>
+                <th width="160px">
+                  供应商
+                </th>
+                <th width="50">
+                  单位
+                </th>
+                <th>
+                  订单数量/收货数量
+                </th>
+                <th width="90px">
+                  单价
+                </th>
+                <th width="110px">
+                  金额
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+
+            </tfoot>
+          </table>
+        </div>
+      </form>
+
+      <!--end form表单界面-->
+      <!--========================================================================================-->
+    </div>
+  </div>
+  <!--end window body -->
+</div>
+<!-- 弹出窗体form表单 -->
+<!-- 弹出编辑对话框 -->
+<!--begin popup detailview javascript block -->
+<script type="text/javascript">
+  //判断新增编辑状态
+  var MODELSTATE = 'Added';
+  var inventoryid = null;
+  function openclosewindow(data) {
+    var poid = data.map(item => item.Id);
+    $('#closeform #PurchaseOrderId').val(poid.toString());
+    $('#receipttable > tbody').empty();
+    $('#receipttable > tfoot').empty();
+    var totalamount = 0;
+    data.map(item => {
+      totalamount += item.BidedPrice * item.ReceiptQty;
+      const tr = `<tr>
+          <td>
+            ${item.PO}
+          </td>
+          <td>
+            ${item.LineNum}
+          </td>
+          <td>
+              ${item.ProductName}
+          </td>
+          <td>
+            ${item.Spec || ''}
+          </td>
+          <td>
+            ${item.Feature || ''}
+          </td>
+          <td>
+              ${item.SupplierName}
+           </td>
+          <td>
+              ${item.Unit}
+           </td>
+          <td>
+           ${item.Qty} / ${item.ReceiptQty}
+          </td>
+          <td>
+            ${numeral(item.BidedPrice).format('0,0.00')}
+          </td>
+           <td>
+            ${numeral(item.BidedPrice * item.ReceiptQty).format('0,0.00')}
+          </td>
+        </tr>`
+      $('#receipttable > tbody').append(tr);
+
+
+     
+    });
+    const foot = `<tr>
+          <td>
+           
+          </td>
+          <td>
+             
+          </td>
+          <td>
+             
+          </td>
+          <td>
+            
+          </td>
+          <td>
+             
+          </td>
+          <td>
+             
+           </td>
+          <td>
+              
+           </td>
+          <td>
+           
+          </td>
+          <td>
+            汇总:
+          </td>
+           <td>
+            ${numeral(totalamount).format('0,0.00')}
+          </td>
+        </tr>`
+    $('#receipttable > tfoot').append(foot);
+    $('#closewindow').window('open');
+    $('#totalamount').val(numeral(totalamount).format('0,0.00'));
+
+  }
+
+   //保存数据
+   function confirmClose() {
+    var msg = "";
+    var data = [];
+    var valid = $('#closeform').valid();
+    if (valid) {
+      var data = $('#closeform').serializeJSON();
+      if (numeral(data.InvoiceAmount).value() != numeral(data.totalamount).value()) {
+        $.messager.confirm('提醒',
+          `开票金额:${numeral(data.InvoiceAmount).format('0,0.00')} 不等于 汇总金额:${numeral(data.totalamount).format('0,0.00')},是否确认要结案?`,
+          function (r) {
+            if (r) {
+              submitConfirmClose(data);
+            }
+          });
+      } else {
+        submitConfirmClose(data);
+      }
+    }
+
+  }
+  function submitConfirmClose(data) {
+    $.post('/PurchaseOrders/ConfirmClose', { request: data })
+      .done(response => {
+        //$.messager.progress('close');
+        if (response.success) {
+          hook = false;
+          reload();
+          $('#closewindow').window("close");
+          toastr.success("保存成功");
+        } else {
+          $.messager.alert("错误", response.err, "error");
+        }
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        //$.messager.progress('close');
+        $.messager.alert('异常', `${jqXHR.status}: ${jqXHR.statusText} `, 'error');
+      });
+  }
+
+  
+</script>
+

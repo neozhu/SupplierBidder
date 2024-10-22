@@ -1,0 +1,244 @@
+﻿@model IEnumerable<WebApp.Models.ViewModel.SummaryReportViewModel>
+@{
+  ViewBag.Title = "采购汇总报表";
+}
+<!-- MAIN CONTENT -->
+<div id="content">
+  <!-- quick navigation bar -->
+  <div class="row">
+    <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+      <h1 class="page-title txt-color-blueDark">
+        <i class="fa fa-table fa-fw "></i>
+        采购中心
+        <span>
+          >
+          采购汇总报表
+        </span>
+      </h1>
+    </div>
+    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+
+    </div>
+  </div>
+  <!-- end quick navigation bar -->
+  <!-- widget grid -->
+  <section id="widget-grid" class="">
+    <!-- row -->
+    <div class="row">
+      <!-- NEW WIDGET START -->
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
+          <!-- widget options:
+          usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+          data-widget-colorbutton="false"
+          data-widget-editbutton="false"
+          data-widget-togglebutton="false"
+          data-widget-deletebutton="false"
+          data-widget-fullscreenbutton="false"
+          data-widget-custombutton="false"
+          data-widget-collapsed="true"
+          data-widget-sortable="false"
+          -->
+          <header>
+            <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+            <h2>采购汇总报表</h2>
+          </header>
+
+          <!-- widget div-->
+          <div>
+            <!-- widget edit box -->
+            <div class="jarviswidget-editbox">
+              <!-- This area used as dropdown edit box -->
+            </div>
+            <!-- end widget edit box -->
+            <!-- widget content -->
+            <div class="widget-body no-padding">
+              <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+              </div>
+
+              <div class="chart-contain" style="padding:10px">
+                <div id="c1" style="width:100%"></div>
+              </div>
+
+              <div class="widget-body-toolbar">
+
+                <div class="row">
+                  <div class="col-sm-8  ">
+                    @*<div class="btn-group btn-group-sm visible-lg-inline-block" style="display:none">
+            <button onclick="shipped()" class="btn btn-default" data-rel="tooltip" data-placement="bottom" title="确认发货"> <i class="fa fa-truck"></i> 确认发货 </button>
+          </div>*@
+
+                    <div class="btn-group btn-group-sm">
+                      <button onclick="reload()" class="btn btn-default"> <i class="fa fa-refresh"></i> @Html.L("Refresh") </button>
+                    </div>
+
+                    <div class="btn-group btn-group-sm">
+                      <button onclick="exportcsv()" class="btn btn-default"> <i class="fa fa-download"></i> 导出Excel </button>
+                    </div>
+
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!--begin datagrid-content -->
+              <div class="table-responsive">
+                <table id="reporttable" class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>
+                        状态
+                      </th>
+                      <th>
+                        订单数
+                      </th>
+                      <th>
+                        总件数
+                      </th>
+                      <th>
+                        总金额(件数x中标价)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach (var item in Model)
+                    {
+                      <tr>
+                        <td>@item.status</td>
+                        <td>@item.count</td>
+                        <td>@item.qty.ToString("#,#")</td>
+                        <td>@item.total.ToString("C")</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+
+              <!--end datagrid-content -->
+            </div>
+            <!-- end widget content -->
+          </div>
+          <!-- end widget div -->
+        </div>
+        <!-- end widget -->
+      </article>
+      <!-- WIDGET END -->
+    </div>
+
+    <div class="row">
+      
+    </div>
+    <!-- end row -->
+  </section>
+  <!-- end widget grid -->
+  <!-- end detail popup window -->
+
+</div>
+<!-- END MAIN CONTENT -->
+<link href="~/Scripts/plugin/tableexport/tableexport.min.css" rel="stylesheet" />
+@section Scripts {
+  <script src="~/Scripts/plugin/tableexport/xlsx.core.min.js"></script>
+  <script src="~/Scripts/plugin/filesaver/FileSaver.min.js"></script>
+  <script src="~/Scripts/plugin/tableexport/tableexport.min.js"></script>
+  <script src="~/Scripts/plugin/tableexport/jquery.table2excel.min.js"></script>
+  <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.15/dist/g2.min.js"></script>
+  <script type="text/javascript">
+
+    TableExport.prototype.charset = "charset=utf-8";
+    function reload() {
+      location.reload();
+    }
+    function exportcsv() {
+      //var aa = $("#reporttable").tableExport({
+      //  formats: ["xlsx"],
+      //  filename: "id"
+      //});
+      //console.log(aa)
+      $("#reporttable").table2excel({
+        name: "汇总金额",
+        filename: "report.xls", // do include extension
+        preserveColors: false // set to true if you want background colors and font colors preserved
+      });
+    }
+
+
+
+    $(async () => {
+
+      const data = await $.get('/PurchaseOrders/GetMonthChartData');
+      console.log(data)
+      var margin = 1 / data.length;
+      // Step 1: 创建 Chart 对象
+      const chart = new G2.Chart({
+        container: 'c1', // 指定图表容器 ID
+        autoFit: true,
+        height: 300, // 指定图表高度
+    
+      });
+      chart.scale({
+        total: {
+          sync: true,
+          nice: true,
+          alias: '采购总额（数量x中标价）',
+         min:0,
+        },
+        month: {
+          range: [margin / 2, 1 - margin / 2],
+          alias: '(月份）',
+        }
+      });
+      chart.legend({
+        position: 'right',
+      });
+      // Step 2: 载入数据源
+      chart.data(data);
+      chart.axis('month', {
+        label: {
+          formatter: function (val) {
+            return val + '月';
+          }
+        },
+        
+      });
+      chart.axis('total', {
+        label: {
+          formatter: function (val) {
+            return  (val/10000) + '万元';
+          }
+        },
+
+      });
+      chart.tooltip({
+        showCrosshairs: true, // 展示 Tooltip 辅助线
+        shared: true,
+      });
+      // Step 3：创建图形语法，绘制柱状图
+      chart.interval().position('month*total')
+        .tooltip('month*total', (month, total) => {
+          return {
+            title: `${month} 月开标的采购单总金额`,
+            name: `数量x中标价`,
+            value: `${numeral(total).format('0,0.0')} 元`,
+          };
+        });
+        //.color('year', ['#40a9ff', '#1890ff', '#096dd9', '#0050b3']);
+      chart.interaction('active-region');
+      // Step 4: 渲染图表
+      chart.render();
+    })
+  </script>
+
+
+
+}
+
+
